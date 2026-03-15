@@ -29,6 +29,12 @@
     "web": {
       "bundler": "metro",
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b2ed9896-4aac-4c82-8eab-9bacbb80df9d"
+      }
+    },
+    "owner": "nishahdraj"
   }
 }

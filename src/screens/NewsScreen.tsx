@@ -1,8 +1,9 @@
 import React from "react";
 import { ScrollView, View, Text } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../context/ThemeContext";
 import { SocietyData } from "../data/societyData";
-import { SectionHeader } from "../components/SectionHeader";
+import { ScreenHeader } from "../components/ScreenHeader";
 import { Card } from "../components/Card";
 import { Badge } from "../components/Badge";
 import { spacing } from "../theme/tokens";
@@ -10,9 +11,11 @@ import { formatDate } from "../utils/format";
 
 export const NewsScreen: React.FC = () => {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: colors.background }} contentContainerStyle={{ padding: spacing.lg }}>
-      <SectionHeader title="📰 News & Updates" subtitle="Latest society highlights" />
+    <ScrollView style={{ flex: 1, backgroundColor: colors.background }} contentContainerStyle={{ padding: spacing.lg, paddingTop: insets.top + spacing.md }}>
+      <ScreenHeader title="News & Updates" />
+      <Text style={{ color: colors.textMuted, fontSize: 13, fontFamily: "Inter_400Regular", marginBottom: spacing.md, marginTop: -spacing.sm }}>Latest society highlights</Text>
       <View style={{ gap: spacing.md }}>
         {SocietyData.news.map((item) => (
           <Card key={item.id}>

@@ -7,6 +7,7 @@ import { SocietyData } from "../data/societyData";
 import { ScreenWrapper } from "../components/ScreenWrapper";
 import { GlassCard } from "../components/GlassCard";
 import { GlassInput } from "../components/GlassInput";
+import { ScreenHeader } from "../components/ScreenHeader";
 import { SectionHeader } from "../components/SectionHeader";
 import { spacing, typography, radius, palette, cardGradients } from "../theme/tokens";
 
@@ -34,7 +35,8 @@ export const ContactsScreen: React.FC = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xxl }}
       >
-        <SectionHeader title="Contacts" subtitle="Emergency + service partners" size="lg" style={{ marginTop: spacing.lg }} />
+        <ScreenHeader title="Contacts" />
+        <Text style={{ color: colors.textMuted, fontSize: 13, fontFamily: "Inter_400Regular", marginBottom: spacing.md, marginTop: -spacing.sm }}>Emergency + service partners</Text>
 
         {/* Emergency hotlines */}
         <View style={{ flexDirection: "row", gap: spacing.sm, marginBottom: spacing.lg }}>

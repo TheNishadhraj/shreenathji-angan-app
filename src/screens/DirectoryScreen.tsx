@@ -12,9 +12,11 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
+import { useNavigation } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../context/ThemeContext";
 import { SocietyData } from "../data/societyData";
-import { SectionHeader } from "../components/SectionHeader";
+import { ScreenHeader } from "../components/ScreenHeader";
 import { Badge } from "../components/Badge";
 import { spacing, radius, shadows } from "../theme/tokens";
 import { getProfilePhotos, setProfilePhoto } from "../utils/storage";
@@ -38,6 +40,8 @@ SocietyData.users.forEach((u) => {
 
 export const DirectoryScreen: React.FC = () => {
   const { colors } = useTheme();
+  const navigation = useNavigation<any>();
+  const insets = useSafeAreaInsets();
   const [query, setQuery] = useState("");
   const [photos, setPhotos] = useState<Record<string, string>>({});
   const screenW = Dimensions.get("window").width;
@@ -96,6 +100,7 @@ export const DirectoryScreen: React.FC = () => {
     return (
       <Pressable
         key={user.id}
+        onPress={() => navigation.navigate("MemberProfile", { member: user })}
         onLongPress={() => pickPhoto(user.id)}
         style={{
           width: cardW,
@@ -185,14 +190,12 @@ export const DirectoryScreen: React.FC = () => {
       style={{ flex: 1, backgroundColor: colors.background }}
       contentContainerStyle={{
         padding: SCREEN_PAD,
-        paddingTop: Platform.OS === "ios" ? 100 : SCREEN_PAD,
+        paddingTop: insets.top + spacing.md,
         paddingBottom: spacing.xxl,
       }}
     >
-      <SectionHeader
-        title="Member Directory"
-        subtitle="Long-press any photo to update"
-      />
+      <ScreenHeader title="Member Directory" />
+      <Text style={{ color: colors.textMuted, fontSize: 13, fontFamily: "Inter_400Regular", marginBottom: spacing.md, marginTop: -spacing.sm }}>Long-press any photo to update</Text>
       <TextInput
         placeholder="Search name, flat, or block"
         placeholderTextColor={colors.textMuted}

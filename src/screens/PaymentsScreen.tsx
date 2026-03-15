@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ScrollView, View, Text, Pressable, TextInput, Animated, Alert, Modal } from "react-native";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../context/ThemeContext";
 import { SocietyData } from "../data/societyData";
 import { SectionHeader } from "../components/SectionHeader";
@@ -31,6 +32,7 @@ const PAYMENT_METHODS = [
 
 export const PaymentsScreen: React.FC = () => {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   const route = useRoute();
   const highlightPending = (route.params as any)?.highlightPending === true;
 
@@ -185,7 +187,7 @@ export const PaymentsScreen: React.FC = () => {
   const paidPayments = history.filter((h) => h.status === "Paid");
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: colors.background }} contentContainerStyle={{ padding: spacing.lg, paddingTop: 100 }}>
+    <ScrollView style={{ flex: 1, backgroundColor: colors.background }} contentContainerStyle={{ padding: spacing.lg, paddingTop: insets.top + spacing.md }}>
       <ScreenHeader title="Payments" />
 
       {/* Pending Payments - Red Highlight + Buzz */}

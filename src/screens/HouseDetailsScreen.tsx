@@ -2,6 +2,7 @@ import React from "react";
 import { ScrollView, View, Text } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../context/ThemeContext";
 import { GlassCard } from "../components/GlassCard";
 import { SocietyData } from "../data/societyData";
@@ -15,6 +16,7 @@ const BHK_CONFIG: Record<string, { icon: string; gradient: readonly [string, str
 
 export const HouseDetailsScreen: React.FC = () => {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   const route = useRoute<any>();
   const mode: "houses" | "residents" = route.params?.mode ?? "houses";
 
@@ -27,7 +29,7 @@ export const HouseDetailsScreen: React.FC = () => {
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: colors.background }}
-      contentContainerStyle={{ padding: spacing.lg, paddingTop: 100, paddingBottom: spacing.xl }}
+      contentContainerStyle={{ padding: spacing.lg, paddingTop: insets.top + spacing.md, paddingBottom: spacing.xl }}
     >
       {/* Hero Card */}
       <GlassCard variant="elevated" style={{ marginBottom: spacing.lg }}>

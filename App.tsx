@@ -32,6 +32,7 @@ import { PollsScreen } from "./src/screens/PollsScreen";
 import { AdminScreen } from "./src/screens/AdminScreen";
 import { HouseDetailsScreen } from "./src/screens/HouseDetailsScreen";
 import { NotificationsScreen } from "./src/screens/NotificationsScreen";
+import { MemberProfileScreen } from "./src/screens/MemberProfileScreen";
 import { getSession, clearSession, setSession } from "./src/utils/storage";
 import { palette, radius, typography, spacing } from "./src/theme/tokens";
 
@@ -58,7 +59,14 @@ const Tabs: React.FC<{ user: any; onUpdate: (data: any) => void; onLogout: () =>
         tabBarIcon: ({ focused, color, size }) => {
           const icons = TAB_ICONS[route.name];
           const iconName = focused ? icons?.focused : icons?.unfocused;
-          return <Ionicons name={iconName ?? "ellipse-outline"} size={22} color={color} />;
+          return (
+            <View style={{ alignItems: "center" }}>
+              <Ionicons name={iconName ?? "ellipse-outline"} size={22} color={color} />
+              {focused ? (
+                <View style={{ width: 5, height: 5, borderRadius: 2.5, backgroundColor: palette.primary, marginTop: 3 }} />
+              ) : null}
+            </View>
+          );
         },
         tabBarLabel: ({ focused }) => (
           <Text
@@ -124,13 +132,9 @@ const MainStack: React.FC<{ user: any; onUpdate: (data: any) => void; onLogout: 
   return (
     <Stack.Navigator
       screenOptions={{
-        headerStyle: { backgroundColor: "transparent" },
-        headerTintColor: colors.text,
-        headerTitleStyle: { ...typography.bodyBold },
-        headerShadowVisible: false,
-        headerTransparent: true,
-        headerBlurEffect: isDark ? "dark" : "light",
+        headerShown: false,
         contentStyle: { backgroundColor: colors.background },
+        animation: "slide_from_right",
       }}
     >
       <Stack.Screen name="Tabs" options={{ headerShown: false }}>
@@ -150,6 +154,7 @@ const MainStack: React.FC<{ user: any; onUpdate: (data: any) => void; onLogout: 
       <Stack.Screen name="Admin" component={AdminScreen} />
       <Stack.Screen name="HouseDetails" component={HouseDetailsScreen} options={{ title: "Details" }} />
       <Stack.Screen name="Notifications" component={NotificationsScreen} />
+      <Stack.Screen name="MemberProfile" component={MemberProfileScreen} />
     </Stack.Navigator>
   );
 };

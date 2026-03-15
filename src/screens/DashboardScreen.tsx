@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ScrollView, View, Text, TextInput, Pressable, Dimensions, Platform, Animated } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import NetInfo from "@react-native-community/netinfo";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { BarChart, PieChart } from "react-native-chart-kit";
@@ -11,7 +12,7 @@ import { ScreenHeader } from "../components/ScreenHeader";
 import { SectionHeader } from "../components/SectionHeader";
 import { StatCard } from "../components/StatCard";
 import { Badge } from "../components/Badge";
-import { radius, spacing, palette } from "../theme/tokens";
+import { radius, spacing, palette, shadows, cardGradients } from "../theme/tokens";
 import { currency, formatDate } from "../utils/format";
 import { getActionUsage, setActionUsage, getNotifications, getComplaints } from "../utils/storage";
 
@@ -169,7 +170,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ user }) => {
               {unreadCount > 0 ? (
                 <View style={{
                   position: "absolute", top: -2, right: -2,
-                  backgroundColor: "#ef4444", borderRadius: 10,
+                  backgroundColor: palette.danger, borderRadius: 10,
                   minWidth: 18, height: 18, alignItems: "center", justifyContent: "center",
                   paddingHorizontal: 4,
                 }}>
@@ -274,10 +275,17 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ user }) => {
         ) : null}
       </View>
 
-      <Card style={{ backgroundColor: colors.primary }}>
-        <Text style={{ color: "#fff", fontSize: 20, fontWeight: "700" }}>Good Day, {firstName} 👋</Text>
-        <Text style={{ color: "#ecfeff", marginTop: 6 }}>Role: {user.role} • Live updates and AI-personalized shortcuts are ready.</Text>
-      </Card>
+      <View style={{ borderRadius: radius.lg, overflow: "hidden", ...shadows.glow }}>
+        <LinearGradient
+          colors={[palette.primary, palette.primaryLight]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{ padding: spacing.lg, borderRadius: radius.lg }}
+        >
+          <Text style={{ color: "#fff", fontSize: 22, fontWeight: "700", fontFamily: "Poppins_700Bold" }}>Good Day, {firstName} 👋</Text>
+          <Text style={{ color: "rgba(255,255,255,0.85)", marginTop: 6, fontFamily: "Inter_400Regular", fontSize: 14, lineHeight: 20 }}>Role: {user.role} • Live updates and AI-personalized shortcuts are ready.</Text>
+        </LinearGradient>
+      </View>
 
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.md, marginTop: spacing.md }}>
         {stats.map((stat) => (
@@ -293,69 +301,85 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ user }) => {
 
       <SectionHeader title="Quick Actions" subtitle="AI-personalized for you" />
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm }}>
-        {quickActions.map((action) => (
-          <Pressable
-            key={action.id}
-            onPress={() => handleAction(action)}
-            style={{
-              flexBasis: "48%",
-              backgroundColor: colors.card,
-              borderRadius: radius.md,
-              borderWidth: 1,
-              borderColor: colors.border,
-              padding: spacing.md
-            }}
-          >
-            <Text style={{ fontSize: 22 }}>{action.icon}</Text>
-            <Text style={{ fontWeight: "700", marginTop: 6, color: colors.text }}>{action.title}</Text>
-            <Text style={{ color: colors.textMuted, marginTop: 4 }}>Tap to open</Text>
-          </Pressable>
-        ))}
+        {quickActions.map((action, idx) => {
+          const grad = cardGradients[idx % cardGradients.length];
+          return (
+            <Pressable
+              key={action.id}
+              onPress={() => handleAction(action)}
+              style={{
+                flexBasis: "48%",
+                backgroundColor: colors.card,
+                borderRadius: radius.lg,
+                borderWidth: 1,
+                borderColor: colors.cardBorder,
+                padding: spacing.md,
+                ...shadows.soft,
+              }}
+            >
+              <View style={{ width: 40, height: 40, borderRadius: radius.sm, overflow: "hidden", marginBottom: spacing.sm }}>
+                <LinearGradient colors={[grad[0], grad[1]]} style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+                  <Text style={{ fontSize: 20 }}>{action.icon}</Text>
+                </LinearGradient>
+              </View>
+              <Text style={{ fontWeight: "700", color: colors.text, fontSize: 15 }}>{action.title}</Text>
+              <Text style={{ color: colors.textMuted, marginTop: 2, fontSize: 12 }}>Tap to open</Text>
+            </Pressable>
+          );
+        })}
       </View>
 
       {isLeader ? (
         <>
-          <SectionHeader title="Leadership Tools" subtitle="Slightly more functions for core leaders" />
+          <SectionHeader title="Leadership Tools" subtitle="Core leadership functions" />
           <View style={{ gap: spacing.sm }}>
             <Card>
-              <Text style={{ fontWeight: "700", color: colors.text }}>📢 Post Updates</Text>
+              <Text style={{ fontWeight: "700", color: colors.text, fontSize: 16 }}>📢 Post Updates</Text>
               <Text style={{ color: colors.textSecondary, marginTop: 4 }}>Create notices and keep residents informed.</Text>
               <Pressable
                 onPress={() => navigation.navigate("News" as never)}
-                style={{ marginTop: spacing.sm, backgroundColor: colors.secondary, padding: 12, borderRadius: radius.md, alignItems: "center" }}
+                style={{ marginTop: spacing.sm, borderRadius: radius.md, overflow: "hidden" }}
               >
-                <Text style={{ color: "#fff", fontWeight: "700" }}>Open News</Text>
+                <LinearGradient colors={[palette.primaryDark, palette.primary]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ padding: 12, borderRadius: radius.md, alignItems: "center" }}>
+                  <Text style={{ color: "#fff", fontWeight: "700" }}>Open News</Text>
+                </LinearGradient>
               </Pressable>
             </Card>
             <Card>
-              <Text style={{ fontWeight: "700", color: colors.text }}>📝 Review Issues</Text>
+              <Text style={{ fontWeight: "700", color: colors.text, fontSize: 16 }}>📝 Review Issues</Text>
               <Text style={{ color: colors.textSecondary, marginTop: 4 }}>Track complaints and respond quickly.</Text>
               <Pressable
                 onPress={() => navigation.navigate("Complaints" as never)}
-                style={{ marginTop: spacing.sm, backgroundColor: colors.primary, padding: 12, borderRadius: radius.md, alignItems: "center" }}
+                style={{ marginTop: spacing.sm, borderRadius: radius.md, overflow: "hidden" }}
               >
-                <Text style={{ color: "#fff", fontWeight: "700" }}>Open Complaints</Text>
+                <LinearGradient colors={[palette.primaryDark, palette.primaryLight]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ padding: 12, borderRadius: radius.md, alignItems: "center" }}>
+                  <Text style={{ color: "#fff", fontWeight: "700" }}>Open Complaints</Text>
+                </LinearGradient>
               </Pressable>
             </Card>
             <Card>
-              <Text style={{ fontWeight: "700", color: colors.text }}>💳 Finance Snapshot</Text>
+              <Text style={{ fontWeight: "700", color: colors.text, fontSize: 16 }}>💳 Finance Snapshot</Text>
               <Text style={{ color: colors.textSecondary, marginTop: 4 }}>Monitor dues and collections at a glance.</Text>
               <Pressable
                 onPress={() => navigation.navigate("Payments" as never)}
-                style={{ marginTop: spacing.sm, backgroundColor: colors.info, padding: 12, borderRadius: radius.md, alignItems: "center" }}
+                style={{ marginTop: spacing.sm, borderRadius: radius.md, overflow: "hidden" }}
               >
-                <Text style={{ color: "#fff", fontWeight: "700" }}>Open Payments</Text>
+                <LinearGradient colors={[palette.info, "#60A5FA"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ padding: 12, borderRadius: radius.md, alignItems: "center" }}>
+                  <Text style={{ color: "#fff", fontWeight: "700" }}>Open Payments</Text>
+                </LinearGradient>
               </Pressable>
             </Card>
             {isAdmin ? (
               <Card>
-                <Text style={{ fontWeight: "700", color: colors.text }}>🛡️ Admin Hub</Text>
+                <Text style={{ fontWeight: "700", color: colors.text, fontSize: 16 }}>🛡️ Admin Hub</Text>
                 <Text style={{ color: colors.textSecondary, marginTop: 4 }}>Full admin access enabled for your role.</Text>
                 <Pressable
                   onPress={() => navigation.navigate("Admin" as never)}
-                  style={{ marginTop: spacing.sm, backgroundColor: colors.secondary, padding: 12, borderRadius: radius.md, alignItems: "center" }}
+                  style={{ marginTop: spacing.sm, borderRadius: radius.md, overflow: "hidden" }}
                 >
-                  <Text style={{ color: "#fff", fontWeight: "700" }}>Open Admin</Text>
+                  <LinearGradient colors={[palette.purple, "#A78BFA"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ padding: 12, borderRadius: radius.md, alignItems: "center" }}>
+                    <Text style={{ color: "#fff", fontWeight: "700" }}>Open Admin</Text>
+                  </LinearGradient>
                 </Pressable>
               </Card>
             ) : null}
@@ -418,18 +442,25 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ user }) => {
 
       <SectionHeader title="Future Ready Modules" subtitle="Voice, Biometrics, AR, Live Activities" />
       <View style={{ gap: spacing.sm }}>
-        <Card>
-          <Text style={{ fontWeight: "700", color: colors.text }}>🎙️ Voice Recognition & Search</Text>
-          <Text style={{ color: colors.textSecondary, marginTop: 4 }}>Hands-free search and navigation is ready for activation.</Text>
-        </Card>
-        <Card>
-          <Text style={{ fontWeight: "700", color: colors.text }}>🔐 Biometric Authentication</Text>
-          <Text style={{ color: colors.textSecondary, marginTop: 4 }}>Face ID / fingerprint ready on supported devices.</Text>
-        </Card>
-        <Card>
-          <Text style={{ fontWeight: "700", color: colors.text }}>🪞 AR Preview</Text>
-          <Text style={{ color: colors.textSecondary, marginTop: 4 }}>Overlay society venues in AR with future ARKit/ARCore bridges.</Text>
-        </Card>
+        {[
+          { icon: "🎙️", title: "Voice Recognition & Search", desc: "Hands-free search and navigation is ready for activation.", grad: cardGradients[3] },
+          { icon: "🔐", title: "Biometric Authentication", desc: "Face ID / fingerprint ready on supported devices.", grad: cardGradients[2] },
+          { icon: "🪞", title: "AR Preview", desc: "Overlay society venues in AR with future ARKit/ARCore bridges.", grad: cardGradients[4] },
+        ].map((mod) => (
+          <Card key={mod.title}>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.md }}>
+              <View style={{ width: 44, height: 44, borderRadius: radius.sm, overflow: "hidden" }}>
+                <LinearGradient colors={[mod.grad[0], mod.grad[1]]} style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+                  <Text style={{ fontSize: 20 }}>{mod.icon}</Text>
+                </LinearGradient>
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontWeight: "700", color: colors.text, fontSize: 15 }}>{mod.title}</Text>
+                <Text style={{ color: colors.textSecondary, marginTop: 2, fontSize: 13 }}>{mod.desc}</Text>
+              </View>
+            </View>
+          </Card>
+        ))}
       </View>
     </ScrollView>
   );

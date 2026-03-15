@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { ScrollView, View, Text, Pressable, TextInput } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../context/ThemeContext";
 import { SocietyData } from "../data/societyData";
+import { ScreenHeader } from "../components/ScreenHeader";
 import { SectionHeader } from "../components/SectionHeader";
 import { Card } from "../components/Card";
 import { spacing, radius } from "../theme/tokens";
@@ -10,6 +12,7 @@ import { formatDate } from "../utils/format";
 
 export const BookingScreen: React.FC = () => {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   const [bookings, setBookings] = useState(SocietyData.bookings);
   const [selectedVenue, setSelectedVenue] = useState<number | null>(null);
   const [purpose, setPurpose] = useState("");
@@ -36,8 +39,9 @@ export const BookingScreen: React.FC = () => {
   };
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: colors.background }} contentContainerStyle={{ padding: spacing.lg }}>
-      <SectionHeader title="🏛️ Book Venue" subtitle="Reserve community spaces" />
+    <ScrollView style={{ flex: 1, backgroundColor: colors.background }} contentContainerStyle={{ padding: spacing.lg, paddingTop: insets.top + spacing.md }}>
+      <ScreenHeader title="Book Venue" />
+      <Text style={{ color: colors.textMuted, fontSize: 13, fontFamily: "Inter_400Regular", marginBottom: spacing.md, marginTop: -spacing.sm }}>Reserve community spaces</Text>
       <View style={{ gap: spacing.md }}>
         {SocietyData.venues.map((venue) => (
           <Card key={venue.id}>

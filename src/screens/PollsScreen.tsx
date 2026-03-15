@@ -5,6 +5,7 @@ import { useTheme } from "../context/ThemeContext";
 import { SocietyData } from "../data/societyData";
 import { ScreenWrapper } from "../components/ScreenWrapper";
 import { GlassCard } from "../components/GlassCard";
+import { ScreenHeader } from "../components/ScreenHeader";
 import { SectionHeader } from "../components/SectionHeader";
 import { Chip } from "../components/Chip";
 import { Badge } from "../components/Badge";
@@ -53,7 +54,8 @@ export const PollsScreen: React.FC<PollsScreenProps> = ({ currentRole }) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xxl }}
       >
-        <SectionHeader title="Polls" subtitle="Your voice matters" size="lg" style={{ marginTop: spacing.lg }} />
+        <ScreenHeader title="Polls" />
+        <Text style={{ color: colors.textMuted, fontSize: 13, fontFamily: "Inter_400Regular", marginBottom: spacing.md, marginTop: -spacing.sm }}>Your voice matters</Text>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: spacing.md }}>
           <View style={{ flexDirection: "row", gap: spacing.sm }}>

@@ -7,7 +7,7 @@ import { ScreenHeader } from "../components/ScreenHeader";
 import { SectionHeader } from "../components/SectionHeader";
 import { Chip } from "../components/Chip";
 import { Card } from "../components/Card";
-import { spacing, radius } from "../theme/tokens";
+import { spacing, radius, palette, shadows } from "../theme/tokens";
 import { timeAgo } from "../utils/format";
 
 const filters = ["All", "Festivals", "National", "Sports", "Health", "Community"];
@@ -26,8 +26,10 @@ export const EventsScreen: React.FC = () => {
   return (
     <ScrollView style={{ flex: 1, backgroundColor: colors.background }} contentContainerStyle={{ padding: spacing.lg }}>
       <ScreenHeader title="Events & Memories" action={
-        <Pressable onPress={() => setShowCreate((prev) => !prev)} style={{ paddingHorizontal: spacing.sm, paddingVertical: 6, backgroundColor: colors.primary, borderRadius: radius.full }}>
-          <Text style={{ color: "#fff", fontWeight: "700" }}>✨ Create Post</Text>
+        <Pressable onPress={() => setShowCreate((prev) => !prev)} style={{ borderRadius: radius.full, overflow: "hidden" }}>
+          <LinearGradient colors={[palette.primary, palette.primaryLight]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ paddingHorizontal: spacing.md, paddingVertical: 6 }}>
+            <Text style={{ color: "#fff", fontWeight: "700", fontSize: 13 }}>✨ Create Post</Text>
+          </LinearGradient>
         </Pressable>
       } />
 
@@ -49,8 +51,10 @@ export const EventsScreen: React.FC = () => {
             style={{ borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: 12, marginBottom: spacing.sm, color: colors.text }}
             multiline
           />
-          <Pressable onPress={() => { setTitle(""); setCaption(""); }} style={{ backgroundColor: colors.primary, padding: 12, borderRadius: radius.md, alignItems: "center" }}>
-            <Text style={{ color: "#fff", fontWeight: "700" }}>Post Event</Text>
+          <Pressable onPress={() => { setTitle(""); setCaption(""); }} style={{ borderRadius: radius.md, overflow: "hidden" }}>
+            <LinearGradient colors={[palette.primary, palette.primaryLight]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ padding: 12, borderRadius: radius.md, alignItems: "center" }}>
+              <Text style={{ color: "#fff", fontWeight: "700" }}>Post Event</Text>
+            </LinearGradient>
           </Pressable>
         </Card>
       ) : null}
@@ -58,11 +62,13 @@ export const EventsScreen: React.FC = () => {
       <SectionHeader title="🔥 Trending" subtitle="Top events by likes" />
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: spacing.md }}>
         {SocietyData.gallery.slice(0, 6).map((item) => (
-          <Card key={item.id} style={{ marginRight: spacing.sm, width: 150 }}>
-            <Text style={{ fontSize: 28 }}>{item.icon}</Text>
-            <Text style={{ fontWeight: "700", color: colors.text }}>{item.title}</Text>
-            <Text style={{ color: colors.textMuted }}>{item.likes.length} likes</Text>
-          </Card>
+          <View key={item.id} style={{ marginRight: spacing.sm, width: 150, borderRadius: radius.lg, overflow: "hidden", ...shadows.soft }}>
+            <LinearGradient colors={[...item.gradient] as [string, string]} style={{ padding: spacing.md, minHeight: 120, justifyContent: "flex-end" }}>
+              <Text style={{ fontSize: 28 }}>{item.icon}</Text>
+              <Text style={{ fontWeight: "700", color: "#fff", marginTop: 6, fontSize: 14 }}>{item.title}</Text>
+              <Text style={{ color: "rgba(255,255,255,0.8)", fontSize: 12 }}>{item.likes.length} likes</Text>
+            </LinearGradient>
+          </View>
         ))}
       </ScrollView>
 
@@ -74,15 +80,19 @@ export const EventsScreen: React.FC = () => {
 
       <View style={{ gap: spacing.md }}>
         {events.map((item) => (
-          <Card key={item.id}>
-            <LinearGradient colors={[...item.gradient] as [string, string]} style={{ borderRadius: radius.md, padding: spacing.lg, alignItems: "center", justifyContent: "center" }}>
-              <Text style={{ fontSize: 40 }}>{item.icon}</Text>
-              <Text style={{ color: "#fff", fontWeight: "700", marginTop: 8 }}>{item.title}</Text>
-            </LinearGradient>
-            <View style={{ marginTop: spacing.sm }}>
-              <Text style={{ fontWeight: "700", color: colors.text }}>{item.likes.length} likes</Text>
-              <Text style={{ color: colors.textSecondary }}>{item.caption}</Text>
-              <Text style={{ color: colors.textMuted }}>{timeAgo(item.date)}</Text>
+          <Card key={item.id} style={shadows.soft}>
+            <View style={{ borderRadius: radius.md, overflow: "hidden", marginBottom: spacing.sm }}>
+              <LinearGradient colors={[...item.gradient] as [string, string]} style={{ padding: spacing.xl, alignItems: "center", justifyContent: "center" }}>
+                <Text style={{ fontSize: 44 }}>{item.icon}</Text>
+                <Text style={{ color: "#fff", fontWeight: "700", marginTop: 8, fontSize: 17 }}>{item.title}</Text>
+              </LinearGradient>
+            </View>
+            <View>
+              <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                <Text style={{ fontWeight: "700", color: colors.text, fontSize: 14 }}>❤️ {item.likes.length} likes</Text>
+                <Text style={{ color: colors.textMuted, fontSize: 12 }}>{timeAgo(item.date)}</Text>
+              </View>
+              <Text style={{ color: colors.textSecondary, marginTop: 4, fontSize: 14 }}>{item.caption}</Text>
             </View>
           </Card>
         ))}

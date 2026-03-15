@@ -1,11 +1,14 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Pressable, ScrollView, Alert } from "react-native";
+import { View, Text, TextInput, Pressable, ScrollView, Alert, Image } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import * as LocalAuthentication from "expo-local-authentication";
 import { SocietyData } from "../data/societyData";
 import { setRegisteredUsers, getRegisteredUsers, setSession, getSession, getPasswordOverrides } from "../utils/storage";
 import { useTheme } from "../context/ThemeContext";
 import { Card } from "../components/Card";
-import { radius, spacing } from "../theme/tokens";
+import { radius, spacing, palette, shadows } from "../theme/tokens";
+
+const shreejiLogo = require("../../assets/shreeji.png");
 
 type AuthScreenProps = {
   onLogin: () => void;
@@ -138,25 +141,34 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: colors.background }} contentContainerStyle={{ padding: spacing.lg }}>
-      <View style={{ alignItems: "center", marginBottom: spacing.lg }}>
-        <Text style={{ fontSize: 48 }}>🏘️</Text>
-        <Text style={{ fontSize: 24, fontWeight: "800", color: colors.text }}>Shreenathji Angan</Text>
-        <Text style={{ color: colors.textSecondary }}>A Community That Feels Like Family</Text>
+      <View style={{ alignItems: "center", marginBottom: spacing.lg, marginTop: spacing.xl }}>
+        <View style={{ ...shadows.glow, borderRadius: 40, marginBottom: spacing.md }}>
+          <Image source={shreejiLogo} style={{ width: 80, height: 80, borderRadius: 40 }} resizeMode="cover" />
+        </View>
+        <Text style={{ fontSize: 26, fontWeight: "800", color: colors.text, fontFamily: "Poppins_700Bold" }}>Shreenathji Angan</Text>
+        <Text style={{ color: colors.textSecondary, fontSize: 14, fontFamily: "Inter_400Regular" }}>A Community That Feels Like Family</Text>
       </View>
 
       <Card>
-        <View style={{ flexDirection: "row", backgroundColor: `${colors.primary}22`, borderRadius: radius.full, padding: 6, marginBottom: spacing.md }}>
+        <View style={{ flexDirection: "row", backgroundColor: `${palette.primary}15`, borderRadius: radius.full, padding: 4, marginBottom: spacing.md }}>
           <Pressable
             onPress={() => setTab("login")}
             style={{
               flex: 1,
               paddingVertical: 10,
               borderRadius: radius.full,
-              backgroundColor: tab === "login" ? colors.card : "transparent",
-              alignItems: "center"
+              overflow: "hidden",
             }}
           >
-            <Text style={{ color: tab === "login" ? colors.primary : colors.textSecondary, fontWeight: "700" }}>Login</Text>
+            {tab === "login" ? (
+              <LinearGradient colors={[palette.primary, palette.primaryLight]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ paddingVertical: 10, alignItems: "center", borderRadius: radius.full }}>
+                <Text style={{ color: "#fff", fontWeight: "700" }}>Login</Text>
+              </LinearGradient>
+            ) : (
+              <View style={{ paddingVertical: 10, alignItems: "center" }}>
+                <Text style={{ color: colors.textSecondary, fontWeight: "700" }}>Login</Text>
+              </View>
+            )}
           </Pressable>
           <Pressable
             onPress={() => setTab("register")}
@@ -164,11 +176,18 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
               flex: 1,
               paddingVertical: 10,
               borderRadius: radius.full,
-              backgroundColor: tab === "register" ? colors.card : "transparent",
-              alignItems: "center"
+              overflow: "hidden",
             }}
           >
-            <Text style={{ color: tab === "register" ? colors.primary : colors.textSecondary, fontWeight: "700" }}>Register</Text>
+            {tab === "register" ? (
+              <LinearGradient colors={[palette.primary, palette.primaryLight]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ paddingVertical: 10, alignItems: "center", borderRadius: radius.full }}>
+                <Text style={{ color: "#fff", fontWeight: "700" }}>Register</Text>
+              </LinearGradient>
+            ) : (
+              <View style={{ paddingVertical: 10, alignItems: "center" }}>
+                <Text style={{ color: colors.textSecondary, fontWeight: "700" }}>Register</Text>
+              </View>
+            )}
           </Pressable>
         </View>
 
@@ -201,8 +220,10 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
                 <Text style={{ fontWeight: "600", color: colors.text }}>🎙️ Voice</Text>
               </Pressable>
             </View>
-            <Pressable onPress={handleLogin} style={{ backgroundColor: colors.primary, padding: 14, borderRadius: radius.md, alignItems: "center" }}>
-              <Text style={{ color: "#fff", fontWeight: "700" }}>🔓 Login to Portal</Text>
+            <Pressable onPress={handleLogin} style={{ borderRadius: radius.md, overflow: "hidden" }}>
+              <LinearGradient colors={[palette.primary, palette.primaryLight]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ padding: 14, borderRadius: radius.md, alignItems: "center" }}>
+                <Text style={{ color: "#fff", fontWeight: "700", fontSize: 15 }}>🔓 Login to Portal</Text>
+              </LinearGradient>
             </Pressable>
             <Text style={{ marginTop: spacing.sm, color: colors.textSecondary }}>
               Login with email or phone. Default password is SA@ + last 4 digits of phone.
@@ -251,8 +272,10 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
               style={{ borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: 12, marginBottom: spacing.sm, color: colors.text }}
               secureTextEntry
             />
-            <Pressable onPress={handleRegister} style={{ backgroundColor: colors.primary, padding: 14, borderRadius: radius.md, alignItems: "center" }}>
-              <Text style={{ color: "#fff", fontWeight: "700" }}>📝 Register Now</Text>
+            <Pressable onPress={handleRegister} style={{ borderRadius: radius.md, overflow: "hidden" }}>
+              <LinearGradient colors={[palette.primary, palette.primaryLight]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ padding: 14, borderRadius: radius.md, alignItems: "center" }}>
+                <Text style={{ color: "#fff", fontWeight: "700", fontSize: 15 }}>📝 Register Now</Text>
+              </LinearGradient>
             </Pressable>
           </View>
         )}

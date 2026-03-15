@@ -2,6 +2,7 @@ import React, { useCallback, useState } from "react";
 import { ScrollView, View, Text, TextInput, Pressable, Alert, Modal } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../context/ThemeContext";
 import { SocietyData } from "../data/societyData";
 import { SectionHeader } from "../components/SectionHeader";
@@ -21,6 +22,7 @@ const categories = ["Plumbing", "Electrical", "Lift", "Security", "Cleaning", "P
 
 export const ComplaintsScreen: React.FC = () => {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   const [filter, setFilter] = useState("All");
   const [complaints, setLocalComplaints] = useState<ComplaintRecord[]>([]);
   const [subject, setSubject] = useState("");
@@ -123,7 +125,7 @@ export const ComplaintsScreen: React.FC = () => {
   };
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: colors.background }} contentContainerStyle={{ padding: spacing.lg, paddingTop: 100 }}>
+    <ScrollView style={{ flex: 1, backgroundColor: colors.background }} contentContainerStyle={{ padding: spacing.lg, paddingTop: insets.top + spacing.md }}>
       <ScreenHeader title="Complaints" />
 
       {/* Submit New Complaint */}

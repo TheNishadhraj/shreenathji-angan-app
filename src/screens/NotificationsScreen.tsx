@@ -2,6 +2,7 @@ import React, { useCallback, useState } from "react";
 import { ScrollView, View, Text, Pressable } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../context/ThemeContext";
 import { GlassCard } from "../components/GlassCard";
 import { ScreenHeader } from "../components/ScreenHeader";
@@ -11,6 +12,7 @@ import { getNotifications, markNotificationRead, getSession, type AppNotificatio
 
 export const NotificationsScreen: React.FC = () => {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   const [notifications, setNotifications] = useState<(AppNotification & { source: string })[]>([]);
   const [userEmail, setUserEmail] = useState("");
 
@@ -48,7 +50,7 @@ export const NotificationsScreen: React.FC = () => {
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: colors.background }}
-      contentContainerStyle={{ padding: spacing.lg, paddingTop: 100, paddingBottom: spacing.xl }}
+      contentContainerStyle={{ padding: spacing.lg, paddingTop: insets.top + spacing.md, paddingBottom: spacing.xl }}
     >
       <ScreenHeader title="Notifications" />
 

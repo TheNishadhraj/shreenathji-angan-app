@@ -11,9 +11,11 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
+import { useNavigation } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../context/ThemeContext";
 import { SocietyData } from "../data/societyData";
-import { SectionHeader } from "../components/SectionHeader";
+import { ScreenHeader } from "../components/ScreenHeader";
 import {
   spacing,
   radius,
@@ -60,6 +62,8 @@ const getBentoSize = (index: number): BentoSize => {
 
 export const CommitteeScreen: React.FC = () => {
   const { colors } = useTheme();
+  const navigation = useNavigation<any>();
+  const insets = useSafeAreaInsets();
   const [photos, setPhotos] = useState<Record<string, string>>({});
   const screenW = Dimensions.get("window").width;
   const cardW = getCardWidth(screenW);
@@ -114,6 +118,7 @@ export const CommitteeScreen: React.FC = () => {
     return (
       <Pressable
         key={member.id}
+        onPress={() => navigation.navigate("MemberProfile", { member })}
         onLongPress={() => pickPhoto(member.id)}
         style={{
           width: cardW,
@@ -223,14 +228,12 @@ export const CommitteeScreen: React.FC = () => {
       style={{ flex: 1, backgroundColor: colors.background }}
       contentContainerStyle={{
         padding: SCREEN_PAD,
-        paddingTop: Platform.OS === "ios" ? 100 : SCREEN_PAD,
+        paddingTop: insets.top + spacing.md,
         paddingBottom: spacing.xxl,
       }}
     >
-      <SectionHeader
-        title="Leadership Team"
-        subtitle="Long-press any photo to update"
-      />
+      <ScreenHeader title="Leadership Team" />
+      <Text style={{ color: colors.textMuted, fontSize: 13, fontFamily: "Inter_400Regular", marginBottom: spacing.md, marginTop: -spacing.sm }}>Long-press any photo to update</Text>
 
       {/* Bento masonry two-column layout */}
       <View style={{ flexDirection: "row", gap: GAP }}>

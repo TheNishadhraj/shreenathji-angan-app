@@ -5,6 +5,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../context/ThemeContext";
 import { GlassCard } from "../components/GlassCard";
+import { ScreenHeader } from "../components/ScreenHeader";
 import { SocietyData } from "../data/societyData";
 import { palette, radius, spacing, typography } from "../theme/tokens";
 
@@ -29,8 +30,9 @@ export const HouseDetailsScreen: React.FC = () => {
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: colors.background }}
-      contentContainerStyle={{ padding: spacing.lg, paddingTop: insets.top + spacing.md, paddingBottom: spacing.xl }}
+      contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingTop: insets.top, paddingBottom: spacing.xl }}
     >
+      <ScreenHeader title={title} showBack />
       {/* Hero Card */}
       <GlassCard variant="elevated" style={{ marginBottom: spacing.lg }}>
         <View style={{ alignItems: "center", paddingVertical: spacing.lg }}>

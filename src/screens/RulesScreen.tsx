@@ -29,7 +29,7 @@ export const RulesScreen: React.FC = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xxl }}
       >
-        <ScreenHeader title="Rules & Regulations" />
+        <ScreenHeader title="Rules & Regulations" showBack />
         <Text style={{ color: colors.textMuted, fontSize: 13, fontFamily: "Inter_400Regular", marginBottom: spacing.md, marginTop: -spacing.sm }}>Community guidelines</Text>
 
         <View style={{ gap: spacing.md }}>

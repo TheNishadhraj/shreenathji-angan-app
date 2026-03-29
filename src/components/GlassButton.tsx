@@ -62,6 +62,7 @@ export const GlassButton: React.FC<GlassButtonProps> = ({
           style={{
             paddingVertical: s.paddingVertical,
             paddingHorizontal: s.paddingHorizontal,
+            minHeight: 44,
             alignItems: "center",
             justifyContent: "center",
             flexDirection: "row",
@@ -115,6 +116,7 @@ export const GlassButton: React.FC<GlassButtonProps> = ({
       style={({ pressed }) => ({
         paddingVertical: s.paddingVertical,
         paddingHorizontal: s.paddingHorizontal,
+        minHeight: 44,
         borderRadius: radius.xl,
         backgroundColor: vs.bg,
         borderWidth: 1,

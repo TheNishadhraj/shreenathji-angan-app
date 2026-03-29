@@ -45,7 +45,7 @@ export const StatCard: React.FC<StatCardProps> = ({
       <Text style={{ ...typography.small, color: colors.textMuted, textTransform: "uppercase", letterSpacing: 0.5 }}>
         {label}
       </Text>
-      <Text style={{ ...typography.h2, color: colors.text, marginTop: 2 }}>{value}</Text>
+      <Text style={{ ...typography.h2, color: colors.text, marginTop: 2 }} numberOfLines={1} adjustsFontSizeToFit>{value}</Text>
     </GlassCard>
   );
 };

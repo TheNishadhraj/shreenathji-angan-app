@@ -52,7 +52,7 @@ export const NotificationsScreen: React.FC = () => {
       style={{ flex: 1, backgroundColor: colors.background }}
       contentContainerStyle={{ padding: spacing.lg, paddingTop: insets.top + spacing.md, paddingBottom: spacing.xl }}
     >
-      <ScreenHeader title="Notifications" />
+      <ScreenHeader title="Notifications" showBack />
 
       {notifications.length === 0 ? (
         <GlassCard>

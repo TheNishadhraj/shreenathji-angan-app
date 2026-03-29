@@ -126,7 +126,7 @@ export const ComplaintsScreen: React.FC = () => {
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: colors.background }} contentContainerStyle={{ padding: spacing.lg, paddingTop: insets.top + spacing.md }}>
-      <ScreenHeader title="Complaints" />
+      <ScreenHeader title="Complaints" showBack />
 
       {/* Submit New Complaint */}
       <Card>

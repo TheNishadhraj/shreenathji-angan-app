@@ -4,12 +4,12 @@
     "slug": "shreenathji-angan",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/shreeji.png",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/shreeji.png",
       "resizeMode": "contain",
-      "backgroundColor": "#0f172a"
+      "backgroundColor": "#0d9488"
     },
     "ios": {
       "supportsTablet": true,
@@ -20,15 +20,13 @@
       "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#0d9488",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "foregroundImage": "./assets/shreeji.png"
       },
       "predictiveBackGestureEnabled": false
     },
     "web": {
       "bundler": "metro",
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/shreeji.png"
     },
     "extra": {
       "eas": {

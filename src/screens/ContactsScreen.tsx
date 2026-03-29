@@ -35,7 +35,7 @@ export const ContactsScreen: React.FC = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xxl }}
       >
-        <ScreenHeader title="Contacts" />
+        <ScreenHeader title="Contacts" showBack />
         <Text style={{ color: colors.textMuted, fontSize: 13, fontFamily: "Inter_400Regular", marginBottom: spacing.md, marginTop: -spacing.sm }}>Emergency + service partners</Text>
 
         {/* Emergency hotlines */}

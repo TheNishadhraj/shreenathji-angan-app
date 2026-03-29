@@ -188,7 +188,7 @@ export const PaymentsScreen: React.FC = () => {
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: colors.background }} contentContainerStyle={{ padding: spacing.lg, paddingTop: insets.top + spacing.md }}>
-      <ScreenHeader title="Payments" />
+<ScreenHeader title="Payments" showBack />
 
       {/* Pending Payments - Red Highlight + Buzz */}
       {pendingPayments.length > 0 ? (

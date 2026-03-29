@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ScrollView, View, Text, TextInput, Pressable, Dimensions, Platform, Animated } from "react-native";
+import { ScrollView, View, Text, TextInput, Pressable, Dimensions, Platform, Animated, useWindowDimensions } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import NetInfo from "@react-native-community/netinfo";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
-import { BarChart, PieChart } from "react-native-chart-kit";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../context/ThemeContext";
 import { SocietyData } from "../data/societyData";
@@ -30,9 +29,8 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ user }) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [openComplaints, setOpenComplaints] = useState(0);
-  const [complaintBreakdown, setComplaintBreakdown] = useState({ pending: 0, inProgress: 0, resolved: 0 });
   const [networkLabel, setNetworkLabel] = useState("5G Ready");
-  const leaderRoles = ["President", "Vice President", "Secretary", "Treasurer"];
+  const leaderRoles = ["President", "Vice President", "Secretary", "Treasurer", "Admin"];
   const isLeader = leaderRoles.includes(user.role);
   const isAdmin = ["Admin", "President", "Secretary"].includes(user.role);
   const firstName = user.name?.split(" ")[0] || "Resident";
@@ -110,11 +108,6 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ user }) => {
         const storedComplaints = await getComplaints();
         const complaints = storedComplaints ?? SocietyData.complaints;
         setOpenComplaints(complaints.filter((c: any) => c.status !== "Resolved").length);
-        setComplaintBreakdown({
-          pending: complaints.filter((c: any) => c.status === "Pending").length,
-          inProgress: complaints.filter((c: any) => c.status === "In Progress").length,
-          resolved: complaints.filter((c: any) => c.status === "Resolved").length,
-        });
       };
       load();
     }, [user.name])
@@ -150,10 +143,11 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ user }) => {
     navigation.navigate(action.screen as never);
   };
 
-  const chartWidth = Dimensions.get("window").width - spacing.lg * 2;
+  const { width: screenWidth } = useWindowDimensions();
+  const statCardWidth = (screenWidth - spacing.lg * 2 - spacing.md) / 2;
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: colors.background }} contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xl }}>
+    <ScrollView style={{ flex: 1, backgroundColor: colors.background }} contentContainerStyle={{ padding: spacing.lg, paddingBottom: 110 }}>
       <ScreenHeader
         title="Dashboard"
         action={
@@ -291,7 +285,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ user }) => {
         {stats.map((stat) => (
           <Pressable
             key={stat.label}
-            style={{ flexBasis: "48%" }}
+            style={{ width: statCardWidth }}
             onPress={() => stat.screen ? (navigation as any).navigate(stat.screen, stat.params) : undefined}
           >
             <StatCard icon={stat.icon} label={stat.label} value={stat.value} />
@@ -387,48 +381,6 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ user }) => {
         </>
       ) : null}
 
-      <SectionHeader title="Payment Overview" action={<Badge label="Last 6 Months" tone="info" />} />
-      <Card>
-        <BarChart
-          data={{
-            labels: ["Oct", "Nov", "Dec", "Jan", "Feb", "Mar"],
-            datasets: [{ data: [12000, 13500, 14000, 15000, 16000, 17500] }]
-          }}
-          width={chartWidth}
-          height={220}
-          chartConfig={{
-            backgroundColor: colors.card,
-            backgroundGradientFrom: colors.card,
-            backgroundGradientTo: colors.card,
-            color: () => colors.primary,
-            labelColor: () => colors.textSecondary
-          }}
-          fromZero
-          yAxisLabel=""
-          yAxisSuffix=""
-          style={{ borderRadius: radius.md }}
-        />
-      </Card>
-
-      <SectionHeader title="Complaint Status" action={<Badge label="Live" tone="warning" />} />
-      <Card>
-        <PieChart
-          data={[
-            { name: "Pending", population: complaintBreakdown.pending || 0.01, color: colors.warning, legendFontColor: colors.textSecondary, legendFontSize: 12 },
-            { name: "In Progress", population: complaintBreakdown.inProgress || 0.01, color: colors.info, legendFontColor: colors.textSecondary, legendFontSize: 12 },
-            { name: "Resolved", population: complaintBreakdown.resolved || 0.01, color: colors.success, legendFontColor: colors.textSecondary, legendFontSize: 12 }
-          ]}
-          width={chartWidth}
-          height={220}
-          accessor="population"
-          backgroundColor="transparent"
-          paddingLeft="0"
-          chartConfig={{
-            color: () => colors.textSecondary
-          }}
-        />
-      </Card>
-
       <SectionHeader title="Latest News" action={<Badge label="Society" tone="primary" />} />
       <Card>
         {SocietyData.news.slice(0, 4).map((news) => (
@@ -440,28 +392,6 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ user }) => {
         ))}
       </Card>
 
-      <SectionHeader title="Future Ready Modules" subtitle="Voice, Biometrics, AR, Live Activities" />
-      <View style={{ gap: spacing.sm }}>
-        {[
-          { icon: "🎙️", title: "Voice Recognition & Search", desc: "Hands-free search and navigation is ready for activation.", grad: cardGradients[3] },
-          { icon: "🔐", title: "Biometric Authentication", desc: "Face ID / fingerprint ready on supported devices.", grad: cardGradients[2] },
-          { icon: "🪞", title: "AR Preview", desc: "Overlay society venues in AR with future ARKit/ARCore bridges.", grad: cardGradients[4] },
-        ].map((mod) => (
-          <Card key={mod.title}>
-            <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.md }}>
-              <View style={{ width: 44, height: 44, borderRadius: radius.sm, overflow: "hidden" }}>
-                <LinearGradient colors={[mod.grad[0], mod.grad[1]]} style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-                  <Text style={{ fontSize: 20 }}>{mod.icon}</Text>
-                </LinearGradient>
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={{ fontWeight: "700", color: colors.text, fontSize: 15 }}>{mod.title}</Text>
-                <Text style={{ color: colors.textSecondary, marginTop: 2, fontSize: 13 }}>{mod.desc}</Text>
-              </View>
-            </View>
-          </Card>
-        ))}
-      </View>
     </ScrollView>
   );
 };

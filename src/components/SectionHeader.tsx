@@ -35,7 +35,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
       ]}
     >
       <View style={{ flex: 1 }}>
-        <Text style={{ ...titleStyle, color: colors.text }}>{title}</Text>
+        <Text style={{ ...titleStyle, color: colors.text }} numberOfLines={1} adjustsFontSizeToFit>{title}</Text>
         {subtitle ? (
           <Text style={{ ...typography.caption, color: colors.textMuted, marginTop: 2 }}>
             {subtitle}

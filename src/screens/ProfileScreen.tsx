@@ -14,6 +14,7 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import * as LocalAuthentication from "expo-local-authentication";
 import { LinearGradient } from "expo-linear-gradient";
+import { useFocusEffect } from "@react-navigation/native";
 import { useTheme } from "../context/ThemeContext";
 import { SectionHeader } from "../components/SectionHeader";
 import { Card } from "../components/Card";
@@ -24,10 +25,17 @@ import {
   setRegisteredUsers,
   getPasswordOverrides,
   setPasswordOverrides,
+  verifyPassword,
   getProfilePhotos,
   setProfilePhoto,
   getProfileBios,
   setProfileBio,
+  getEvents,
+  setEvents,
+  deleteEvent,
+  getBiometricEnabled,
+  setBiometricEnabled,
+  clearBiometricEnabled,
 } from "../utils/storage";
 
 type ProfileScreenProps = {
@@ -43,20 +51,14 @@ type ProfileScreenProps = {
   onLogout: () => void;
 };
 
-type TabKey = "posts" | "videos" | "likes" | "saved";
+type TabKey = "posts" | "likes";
 
 const TABS: { key: TabKey; icon: string }[] = [
   { key: "posts", icon: "▦" },
-  { key: "videos", icon: "▶" },
   { key: "likes", icon: "♥" },
-  { key: "saved", icon: "⊡" },
 ];
 
-// Placeholder gallery images
-const placeholderGallery = Array.from({ length: 9 }, (_, i) => ({
-  id: i,
-  uri: `https://picsum.photos/seed/sa_${i}/400/400`,
-}));
+const LEADERSHIP_ROLES = ["President", "Vice President", "VP", "Treasurer", "Secretary", "Committee Member"];
 
 const screenW = Dimensions.get("window").width;
 
@@ -68,6 +70,12 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onUpdate, on
   const [bioInput, setBioInput] = useState("");
   const [activeTab, setActiveTab] = useState<TabKey>("posts");
 
+  // Activity stats
+  const [postCount, setPostCount] = useState(0);
+  const [likeCount, setLikeCount] = useState(0);
+  const [userPosts, setUserPosts] = useState<any[]>([]);
+  const [likedPosts, setLikedPosts] = useState<any[]>([]);
+
   // Settings modal
   const [showSettings, setShowSettings] = useState(false);
   const [name, setName] = useState(user.name);
@@ -75,6 +83,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onUpdate, on
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [biometricOn, setBiometricOn] = useState(false);
 
   const photoKey = user.email.toLowerCase();
   const bioKey = user.id || user.email;
@@ -86,7 +95,44 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onUpdate, on
     getProfileBios().then((bios) => {
       if (bios[bioKey]) setBio(bios[bioKey]);
     });
+    getBiometricEnabled().then((email) => {
+      setBiometricOn(email === user.email.toLowerCase());
+    });
   }, [photoKey, bioKey]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const loadStats = async () => {
+        const allEvents = await getEvents();
+        const evts = allEvents ?? SocietyData.gallery ?? [];
+        const myPosts = evts.filter((e: any) => e.postedBy?.toLowerCase() === user.email.toLowerCase());
+        const liked = evts.filter((e: any) => (e.likes ?? []).includes(user.email.toLowerCase()));
+        setUserPosts(myPosts);
+        setLikedPosts(liked);
+        setPostCount(myPosts.length);
+        setLikeCount(liked.length);
+      };
+      loadStats();
+    }, [user.email])
+  );
+
+  const handleDeletePost = (eventId: number) => {
+    Alert.alert("Delete Post", "Remove this post permanently?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: async () => {
+          const allEvents = (await getEvents()) ?? [];
+          const updated = allEvents.filter((e: any) => e.id !== eventId);
+          await setEvents(updated);
+          await deleteEvent(eventId);
+          setUserPosts((prev) => prev.filter((p: any) => p.id !== eventId));
+          setPostCount((prev) => Math.max(0, prev - 1));
+        },
+      },
+    ]);
+  };
 
   const defaultPhoto = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&size=400&background=random&color=fff&bold=true&format=png`;
 
@@ -104,8 +150,9 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onUpdate, on
     });
     if (!result.canceled && result.assets[0]) {
       const uri = result.assets[0].uri;
-      setPhotoUri(uri);
-      await setProfilePhoto(photoKey, uri);
+      setPhotoUri(uri); // show immediately with local URI
+      const publicUrl = await setProfilePhoto(photoKey, uri);
+      setPhotoUri(publicUrl); // update with Supabase public URL
     }
   }, [photoKey]);
 
@@ -142,7 +189,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onUpdate, on
     const allUsers = [...SocietyData.users, ...(await getRegisteredUsers())];
     const existing = allUsers.find((u) => u.email.toLowerCase() === user.email.toLowerCase());
     const expected = overrides[user.email.toLowerCase()] || existing?.password || "";
-    if (expected !== currentPassword) {
+    const [isMatch] = await verifyPassword(currentPassword, expected);
+    if (!isMatch) {
       Alert.alert("Invalid", "Current password is incorrect.");
       return;
     }
@@ -163,15 +211,31 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onUpdate, on
   const handleBiometric = async () => {
     const hasHardware = await LocalAuthentication.hasHardwareAsync();
     if (!hasHardware) {
-      Alert.alert("Unavailable", "Biometric hardware not available.");
+      Alert.alert("Unavailable", "Biometric hardware not available on this device.");
       return;
     }
     const enrolled = await LocalAuthentication.isEnrolledAsync();
     if (!enrolled) {
-      Alert.alert("Not Enrolled", "Please enroll Face ID / fingerprint on this device.");
+      Alert.alert("Not Enrolled", "Please enroll Face ID / fingerprint on this device first.");
       return;
     }
-    await LocalAuthentication.authenticateAsync({ promptMessage: "Unlock Shreenathji Angan" });
+    if (biometricOn) {
+      // Disable biometric
+      await clearBiometricEnabled();
+      setBiometricOn(false);
+      Alert.alert("Disabled", "Biometric login has been turned off.");
+    } else {
+      // Verify fingerprint before enabling
+      const result = await LocalAuthentication.authenticateAsync({
+        promptMessage: "Verify your fingerprint to enable biometric login",
+        fallbackLabel: "Use passcode",
+      });
+      if (result.success) {
+        await setBiometricEnabled(user.email);
+        setBiometricOn(true);
+        Alert.alert("Enabled", "Biometric login is now active. You can sign in with your fingerprint.");
+      }
+    }
   };
 
   const PHOTO_SIZE = 110;
@@ -181,7 +245,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onUpdate, on
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: colors.background }}
-      contentContainerStyle={{ paddingBottom: spacing.xxl }}
+      contentContainerStyle={{ paddingBottom: 110 }}
     >
       {/* ── Cover / Header Area ── */}
       <LinearGradient
@@ -339,7 +403,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onUpdate, on
             }}
             numberOfLines={1}
           >
-            {user.role}
+            {LEADERSHIP_ROLES.includes(user.role) ? `Resident / ${user.role}` : user.role}
           </Text>
           <Text style={{ ...typography.tiny, color: colors.textMuted, marginTop: 2 }}>Designation</Text>
         </View>
@@ -356,6 +420,28 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onUpdate, on
             {user.phone?.replace("+91 ", "") || "—"}
           </Text>
           <Text style={{ ...typography.tiny, color: colors.textMuted, marginTop: 2 }}>Mobile</Text>
+        </View>
+      </View>
+
+      {/* ── Activity Stats Row ── */}
+      <View
+        style={{
+          flexDirection: "row",
+          marginTop: spacing.sm,
+          marginHorizontal: spacing.lg,
+          paddingVertical: spacing.md,
+          borderBottomWidth: 0.5,
+          borderColor: colors.border,
+        }}
+      >
+        <View style={{ flex: 1, alignItems: "center" }}>
+          <Text style={{ ...typography.h3, color: colors.text }}>{postCount}</Text>
+          <Text style={{ ...typography.tiny, color: colors.textMuted, marginTop: 2 }}>Posts</Text>
+        </View>
+        <View style={{ width: 0.5, backgroundColor: colors.border }} />
+        <View style={{ flex: 1, alignItems: "center" }}>
+          <Text style={{ ...typography.h3, color: colors.text }}>{likeCount}</Text>
+          <Text style={{ ...typography.tiny, color: colors.textMuted, marginTop: 2 }}>Liked</Text>
         </View>
       </View>
 
@@ -454,42 +540,76 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onUpdate, on
           gap: gridGap,
         }}
       >
-        {activeTab === "posts" &&
-          placeholderGallery.map((img) => (
-            <Image
-              key={img.id}
-              source={{ uri: img.uri }}
-              style={{
-                width: gridItemSize,
-                height: gridItemSize,
-                borderRadius: radius.sm,
-              }}
-            />
-          ))}
-        {activeTab === "videos" && (
-          <View style={{ flex: 1, alignItems: "center", paddingVertical: spacing.xxl }}>
-            <Text style={{ fontSize: 40 }}>🎬</Text>
-            <Text style={{ ...typography.caption, color: colors.textMuted, marginTop: spacing.sm }}>
-              No videos yet
-            </Text>
-          </View>
-        )}
-        {activeTab === "likes" && (
-          <View style={{ flex: 1, alignItems: "center", paddingVertical: spacing.xxl }}>
-            <Text style={{ fontSize: 40 }}>❤️</Text>
-            <Text style={{ ...typography.caption, color: colors.textMuted, marginTop: spacing.sm }}>
-              No liked posts yet
-            </Text>
-          </View>
-        )}
-        {activeTab === "saved" && (
-          <View style={{ flex: 1, alignItems: "center", paddingVertical: spacing.xxl }}>
-            <Text style={{ fontSize: 40 }}>🔖</Text>
-            <Text style={{ ...typography.caption, color: colors.textMuted, marginTop: spacing.sm }}>
-              No saved posts yet
-            </Text>
-          </View>
-        )}
+        {/* Posts Grid */}
+        {activeTab === "posts" ? (
+          userPosts.length === 0 ? (
+            <View style={{ width: "100%", alignItems: "center", paddingVertical: spacing.xxl }}>
+              <Text style={{ fontSize: 40 }}>📷</Text>
+              <Text style={{ ...typography.caption, color: colors.textMuted, marginTop: spacing.sm }}>No posts yet</Text>
+            </View>
+          ) : (
+            userPosts.map((post: any) => (
+              <View key={post.id} style={{ position: "relative", width: gridItemSize, height: gridItemSize }}>
+                {post.imageUri ? (
+                  <Image
+                    source={{ uri: post.imageUri }}
+                    style={{ width: "100%", height: "100%", borderRadius: radius.sm }}
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <LinearGradient
+                    colors={(post.gradient ?? ["#667eea", "#764ba2"]) as [string, string]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={{ width: "100%", height: "100%", borderRadius: radius.sm, alignItems: "center", justifyContent: "center" }}
+                  >
+                    <Text style={{ fontSize: 22 }}>{post.icon}</Text>
+                  </LinearGradient>
+                )}
+                <Pressable
+                  onPress={() => handleDeletePost(post.id)}
+                  style={{
+                    position: "absolute", top: 4, right: 4, width: 24, height: 24, borderRadius: 12,
+                    backgroundColor: "rgba(0,0,0,0.55)", alignItems: "center", justifyContent: "center",
+                  }}
+                >
+                  <Text style={{ color: "#FFF", fontSize: 11 }}>🗑</Text>
+                </Pressable>
+              </View>
+            ))
+          )
+        ) : null}
+
+        {/* Liked Posts Grid */}
+        {activeTab === "likes" ? (
+          likedPosts.length === 0 ? (
+            <View style={{ width: "100%", alignItems: "center", paddingVertical: spacing.xxl }}>
+              <Text style={{ fontSize: 40 }}>❤️</Text>
+              <Text style={{ ...typography.caption, color: colors.textMuted, marginTop: spacing.sm }}>No liked posts yet</Text>
+            </View>
+          ) : (
+            likedPosts.map((post: any) => (
+              <View key={post.id} style={{ width: gridItemSize, height: gridItemSize }}>
+                {post.imageUri ? (
+                  <Image
+                    source={{ uri: post.imageUri }}
+                    style={{ width: "100%", height: "100%", borderRadius: radius.sm }}
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <LinearGradient
+                    colors={(post.gradient ?? ["#667eea", "#764ba2"]) as [string, string]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={{ width: "100%", height: "100%", borderRadius: radius.sm, alignItems: "center", justifyContent: "center" }}
+                  >
+                    <Text style={{ fontSize: 22 }}>{post.icon}</Text>
+                  </LinearGradient>
+                )}
+              </View>
+            ))
+          )
+        ) : null}
       </View>
 
       {/* ── Settings Modal ── */}
@@ -560,13 +680,38 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onUpdate, on
             <Pressable
               onPress={handleBiometric}
               style={{
-                padding: 12,
+                padding: 14,
                 borderRadius: radius.md,
-                backgroundColor: `${colors.info}22`,
+                backgroundColor: biometricOn ? `${colors.success}18` : `${colors.info}18`,
                 marginBottom: spacing.sm,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
               }}
             >
-              <Text style={{ color: colors.info, fontFamily: "Inter_600SemiBold" }}>Enable Biometrics</Text>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+                <Text style={{ fontSize: 20 }}>🔐</Text>
+                <View>
+                  <Text style={{ color: biometricOn ? colors.success : colors.info, fontFamily: "Inter_600SemiBold", fontSize: 15 }}>
+                    Fingerprint Login
+                  </Text>
+                  <Text style={{ color: colors.textMuted, fontFamily: "Inter_400Regular", fontSize: 12, marginTop: 2 }}>
+                    {biometricOn ? "Enabled — tap to disable" : "Tap to enable biometric sign-in"}
+                  </Text>
+                </View>
+              </View>
+              <View style={{
+                width: 44, height: 26, borderRadius: 13,
+                backgroundColor: biometricOn ? colors.success : colors.border,
+                justifyContent: "center",
+                paddingHorizontal: 2,
+              }}>
+                <View style={{
+                  width: 22, height: 22, borderRadius: 11,
+                  backgroundColor: "#fff",
+                  alignSelf: biometricOn ? "flex-end" : "flex-start",
+                }} />
+              </View>
             </Pressable>
           </Card>
 

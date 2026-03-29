@@ -1,3 +1,4 @@
+import "react-native-url-polyfill/auto";
 import React, { useEffect, useState } from "react";
 import { View, Text, Platform, ScrollView } from "react-native";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
@@ -10,7 +11,7 @@ import { Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold } from "@expo-
 import { Inter_400Regular, Inter_600SemiBold } from "@expo-google-fonts/inter";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
 import { ThemeProvider, useTheme } from "./src/context/ThemeContext";
@@ -33,6 +34,7 @@ import { AdminScreen } from "./src/screens/AdminScreen";
 import { HouseDetailsScreen } from "./src/screens/HouseDetailsScreen";
 import { NotificationsScreen } from "./src/screens/NotificationsScreen";
 import { MemberProfileScreen } from "./src/screens/MemberProfileScreen";
+import { NoticesScreen } from "./src/screens/NoticesScreen";
 import { getSession, clearSession, setSession } from "./src/utils/storage";
 import { palette, radius, typography, spacing } from "./src/theme/tokens";
 
@@ -51,6 +53,7 @@ const TAB_ICONS: Record<string, { focused: keyof typeof Ionicons.glyphMap; unfoc
 
 const Tabs: React.FC<{ user: any; onUpdate: (data: any) => void; onLogout: () => void }> = ({ user, onUpdate, onLogout }) => {
   const { colors, isDark } = useTheme();
+  const insets = useSafeAreaInsets();
 
   return (
     <Tab.Navigator
@@ -84,7 +87,8 @@ const Tabs: React.FC<{ user: any; onUpdate: (data: any) => void; onLogout: () =>
           backgroundColor: colors.tabBar,
           borderTopColor: colors.tabBarBorder,
           borderTopWidth: 0.5,
-          height: Platform.OS === "ios" ? 88 : 64,
+          height: Platform.OS === "ios" ? 88 : 64 + insets.bottom,
+          paddingBottom: Platform.OS === "ios" ? 0 : insets.bottom,
           paddingTop: spacing.xs,
           ...(Platform.OS === "ios" || isWeb ? {} : { elevation: 0 }),
         },
@@ -115,7 +119,9 @@ const Tabs: React.FC<{ user: any; onUpdate: (data: any) => void; onLogout: () =>
         {() => <DashboardScreen user={user} />}
       </Tab.Screen>
       <Tab.Screen name="Society" component={SocietyScreen} />
-      <Tab.Screen name="Events" component={EventsScreen} />
+      <Tab.Screen name="Events">
+        {() => <EventsScreen userEmail={user.email} userName={user.name} role={user.role} />}
+      </Tab.Screen>
       <Tab.Screen name="Services">
         {() => <ServicesScreen role={user.role} />}
       </Tab.Screen>
@@ -149,12 +155,13 @@ const MainStack: React.FC<{ user: any; onUpdate: (data: any) => void; onLogout: 
       <Stack.Screen name="News" component={NewsScreen} />
       <Stack.Screen name="Rules" component={RulesScreen} />
       <Stack.Screen name="Polls">
-        {() => <PollsScreen currentRole={user.role} />}
+        {() => <PollsScreen currentRole={user.role} userEmail={user.email} />}
       </Stack.Screen>
       <Stack.Screen name="Admin" component={AdminScreen} />
       <Stack.Screen name="HouseDetails" component={HouseDetailsScreen} options={{ title: "Details" }} />
       <Stack.Screen name="Notifications" component={NotificationsScreen} />
       <Stack.Screen name="MemberProfile" component={MemberProfileScreen} />
+      <Stack.Screen name="Notices" component={NoticesScreen} />
     </Stack.Navigator>
   );
 };

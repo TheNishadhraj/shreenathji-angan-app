@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../context/ThemeContext";
 import { SocietyData } from "../data/societyData";
@@ -47,9 +47,11 @@ export const DirectoryScreen: React.FC = () => {
   const screenW = Dimensions.get("window").width;
   const cardW = getCardWidth(screenW);
 
-  useEffect(() => {
-    getProfilePhotos().then(setPhotos);
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      getProfilePhotos().then(setPhotos);
+    }, [])
+  );
 
   const list = SocietyData.users.filter(
     (u) =>
@@ -194,7 +196,7 @@ export const DirectoryScreen: React.FC = () => {
         paddingBottom: spacing.xxl,
       }}
     >
-      <ScreenHeader title="Member Directory" />
+      <ScreenHeader title="Member Directory" showBack />
       <Text style={{ color: colors.textMuted, fontSize: 13, fontFamily: "Inter_400Regular", marginBottom: spacing.md, marginTop: -spacing.sm }}>Long-press any photo to update</Text>
       <TextInput
         placeholder="Search name, flat, or block"

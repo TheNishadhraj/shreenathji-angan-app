@@ -321,7 +321,9 @@ export const EventsScreen: React.FC<EventsScreenProps> = ({ userEmail, userName,
   const handleDeletePost = async (eventId: number) => {
     const updated = events.filter((e) => e.id !== eventId);
     setEventsState(updated);
-    await Promise.all([setEvents(updated), deleteEvent(eventId)]);
+    try {
+      await Promise.all([setEvents(updated), deleteEvent(eventId)]);
+    } catch {}
   };
 
   // ── Share ─────────────────────────────────────────────────────

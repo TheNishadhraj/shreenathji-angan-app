@@ -49,7 +49,7 @@ export const DirectoryScreen: React.FC = () => {
 
   useFocusEffect(
     useCallback(() => {
-      getProfilePhotos().then(setPhotos);
+      getProfilePhotos().then(setPhotos).catch(() => {});
     }, [])
   );
 

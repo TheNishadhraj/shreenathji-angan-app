@@ -257,17 +257,22 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
       if (users.some((u) => normalizePhone(u.phone || "") === pd)) {
         Alert.alert("Exists", "Phone already registered."); return;
       }
-      const otp = generateOTP(regPhone);
+      const { delivered, code } = await generateOTP(regPhone, "register");
       setOtpSentTo(pd.slice(-4));
       setResendTimer(60);
       setView("verify-register");
-      if (__DEV__) Alert.alert("OTP (Dev)", `Code: ${otp}`);
+      if (delivered) {
+        Alert.alert("OTP Sent", `Verification code sent to your email.`);
+      } else if (code) {
+        Alert.alert("Your Verification Code", `${code}\n\nPlease enter this code to verify your account.`);
+      }
     } finally { setLoading(false); }
   };
 
   const handleVerifyRegister = async () => {
     if (regOtp.length !== 6) { Alert.alert("Invalid", "Enter the 6-digit code."); return; }
-    if (!verifyOTP(regPhone, regOtp)) { Alert.alert("Invalid OTP", "Incorrect or expired code."); return; }
+    const otpOk = await verifyOTP(regPhone, regOtp, "register");
+    if (!otpOk) { Alert.alert("Invalid OTP", "Incorrect or expired code."); return; }
     setLoading(true);
     try {
       const block = regFlat.trim()[0]?.toUpperCase() || "A";
@@ -289,12 +294,12 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
     } finally { setLoading(false); }
   };
 
-  const resendRegOTP = () => {
+  const resendRegOTP = async () => {
     if (resendTimer > 0) return;
-    const otp = generateOTP(regPhone);
+    const { delivered, code } = await generateOTP(regPhone, "register");
     setResendTimer(60);
-    if (__DEV__) Alert.alert("OTP (Dev)", `Code: ${otp}`);
-    else Alert.alert("Sent", `New code sent to ****${normalizePhone(regPhone).slice(-4)}.`);
+    if (delivered) Alert.alert("Sent", `New code sent to your email.`);
+    else if (code) Alert.alert("Your Verification Code", `${code}\n\nPlease enter this code to verify.`);
   };
 
   // ═══════ FORGOT PASSWORD ══════════════════════════════════════
@@ -306,17 +311,18 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
       const u = matchUser(users, forgotId);
       if (!u) { Alert.alert("Not Found", "No account found."); return; }
       setForgotUser(u);
-      const otp = generateOTP(u.phone);
+      const { delivered, code } = await generateOTP(u.phone, "forgot");
       setResendTimer(60);
       setView("forgot-otp");
-      if (__DEV__) Alert.alert("OTP (Dev)", `Code: ${otp}`);
-      else Alert.alert("Sent", `Code sent to ****${normalizePhone(u.phone).slice(-4)}.`);
+      if (delivered) Alert.alert("Sent", `Code sent to your registered email.`);
+      else if (code) Alert.alert("Your Verification Code", `${code}\n\nPlease enter this code to reset your password.`);
     } finally { setLoading(false); }
   };
 
-  const handleForgotVerify = () => {
+  const handleForgotVerify = async () => {
     if (forgotOtp.length !== 6) { Alert.alert("Invalid", "Enter 6-digit code."); return; }
-    if (!verifyOTP(forgotUser?.phone || "", forgotOtp)) { Alert.alert("Invalid OTP", "Incorrect or expired."); return; }
+    const fOk = await verifyOTP(forgotUser?.phone || "", forgotOtp, "forgot");
+    if (!fOk) { Alert.alert("Invalid OTP", "Incorrect or expired."); return; }
     setView("forgot-reset");
   };
 
@@ -330,12 +336,12 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
     } finally { setLoading(false); }
   };
 
-  const forgotResend = () => {
+  const forgotResend = async () => {
     if (resendTimer > 0 || !forgotUser) return;
-    const otp = generateOTP(forgotUser.phone);
+    const { delivered, code } = await generateOTP(forgotUser.phone, "forgot");
     setResendTimer(60);
-    if (__DEV__) Alert.alert("OTP (Dev)", `Code: ${otp}`);
-    else Alert.alert("Sent", "New code sent.");
+    if (delivered) Alert.alert("Sent", "New code sent to your email.");
+    else if (code) Alert.alert("Your Verification Code", `${code}\n\nPlease enter this code.`);
   };
 
   // ── Nav ───────────────────────────────────────────────────────

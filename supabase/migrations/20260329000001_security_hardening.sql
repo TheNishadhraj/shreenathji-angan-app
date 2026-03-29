@@ -41,27 +41,49 @@ create policy "ru_update" on registered_users
 --    Helps guard against memory exhaustion and reduces injection surface.
 -- -----------------------------------------------------------------------
 
-alter table registered_users
-  add constraint if not exists chk_ru_name_len   check (length(name)  <= 100),
-  add constraint if not exists chk_ru_email_len  check (length(email) <= 254),
-  add constraint if not exists chk_ru_flat_len   check (length(flat)  <= 20),
-  add constraint if not exists chk_ru_block_len  check (length(block) <= 10),
-  add constraint if not exists chk_ru_phone_len  check (length(phone) <= 20);
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_ru_name_len') THEN
+    ALTER TABLE registered_users ADD CONSTRAINT chk_ru_name_len CHECK (length(name) <= 100);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_ru_email_len') THEN
+    ALTER TABLE registered_users ADD CONSTRAINT chk_ru_email_len CHECK (length(email) <= 254);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_ru_flat_len') THEN
+    ALTER TABLE registered_users ADD CONSTRAINT chk_ru_flat_len CHECK (length(flat) <= 20);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_ru_block_len') THEN
+    ALTER TABLE registered_users ADD CONSTRAINT chk_ru_block_len CHECK (length(block) <= 10);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_ru_phone_len') THEN
+    ALTER TABLE registered_users ADD CONSTRAINT chk_ru_phone_len CHECK (length(phone) <= 20);
+  END IF;
+END $$;
 
-alter table complaints
-  add constraint if not exists chk_comp_desc_len check (length(description) <= 2000),
-  add constraint if not exists chk_comp_sub_len  check (length(subject)     <= 200);
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_comp_desc_len') THEN
+    ALTER TABLE complaints ADD CONSTRAINT chk_comp_desc_len CHECK (length(description) <= 2000);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_comp_title_len') THEN
+    ALTER TABLE complaints ADD CONSTRAINT chk_comp_title_len CHECK (length(title) <= 200);
+  END IF;
+END $$;
 
-alter table events
-  add constraint if not exists chk_ev_title_len   check (length(title)   <= 200),
-  add constraint if not exists chk_ev_caption_len check (length(caption) <= 1000);
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_ev_title_len') THEN
+    ALTER TABLE events ADD CONSTRAINT chk_ev_title_len CHECK (length(title) <= 200);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_ev_caption_len') THEN
+    ALTER TABLE events ADD CONSTRAINT chk_ev_caption_len CHECK (length(caption) <= 1000);
+  END IF;
+END $$;
 
-alter table notices
-  add constraint if not exists chk_not_title_len   check (length(title)   <= 200),
-  add constraint if not exists chk_not_content_len check (length(content) <= 5000);
+-- notices table not in schema; constraints skipped
 
-alter table bookings
-  add constraint if not exists chk_bk_notes_len check (length(notes) <= 500);
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_bk_purpose_len') THEN
+    ALTER TABLE bookings ADD CONSTRAINT chk_bk_purpose_len CHECK (length(purpose) <= 500);
+  END IF;
+END $$;
 
 -- -----------------------------------------------------------------------
 -- 3. Email indexes for performance (reduces slow-query DoS surface)

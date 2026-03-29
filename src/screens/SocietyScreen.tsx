@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { ScrollView, View, Text, Pressable } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -33,7 +34,6 @@ export const SocietyScreen: React.FC = () => {
         // Unread priority notices (urgent + important not yet acknowledged)
         const userEmail = session?.email?.toLowerCase() || "";
         const readKey = `sa_notices_read_${userEmail}`;
-        const { default: AsyncStorage } = await import("@react-native-async-storage/async-storage");
         const raw = await AsyncStorage.getItem(readKey);
         const readIds: number[] = raw ? JSON.parse(raw) : [];
         const urgentUnread = SocietyData.notices.filter(

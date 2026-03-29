@@ -697,24 +697,43 @@ export const clearBiometricEnabled = async () => {
   await AsyncStorage.removeItem("sa_biometric_email");
 };
 
-// ─── OTP Helpers (simulated — replace with real SMS gateway in prod) ──
-let _otpStore: { code: string; expiresAt: number; target: string } | null = null;
+// ─── OTP Helpers (server-side via Supabase Edge Function + otp_codes table) ──
 
-/** Generate a 6-digit OTP bound to a phone/email. Returns the code. */
-export const generateOTP = (target: string): string => {
-  const code = String(Math.floor(100000 + Math.random() * 900000));
-  _otpStore = { code, target: target.toLowerCase(), expiresAt: Date.now() + 5 * 60_000 };
-  return code;
+/** Send OTP to a target (email/phone). Returns the code only as fallback (when email delivery is not configured). */
+export const generateOTP = async (target: string, action = "verify"): Promise<{ delivered: boolean; code?: string }> => {
+  try {
+    const { data, error } = await supabase.functions.invoke("send-otp", {
+      body: { target: target.toLowerCase().trim(), action },
+    });
+    if (error) throw error;
+    return { delivered: !!data?.delivered, code: data?.code };
+  } catch {
+    // Fallback: generate locally and store in Supabase directly
+    const code = String(Math.floor(100000 + Math.random() * 900000));
+    const expiresAt = new Date(Date.now() + 5 * 60_000).toISOString();
+    await supabase.from("otp_codes").insert({
+      target: target.toLowerCase().trim(),
+      code,
+      action,
+      expires_at: expiresAt,
+    });
+    return { delivered: false, code };
+  }
 };
 
-/** Verify the OTP. Returns true if valid & not expired, then clears the store. */
-export const verifyOTP = (target: string, code: string): boolean => {
-  if (!_otpStore) return false;
-  if (_otpStore.target !== target.toLowerCase()) return false;
-  if (Date.now() > _otpStore.expiresAt) { _otpStore = null; return false; }
-  if (_otpStore.code !== code) return false;
-  _otpStore = null;
-  return true;
+/** Verify an OTP server-side via Supabase RPC. */
+export const verifyOTP = async (target: string, code: string, action = "verify"): Promise<boolean> => {
+  try {
+    const { data, error } = await supabase.rpc("verify_otp", {
+      p_target: target.toLowerCase().trim(),
+      p_code: code,
+      p_action: action,
+    });
+    if (error) throw error;
+    return !!data;
+  } catch {
+    return false;
+  }
 };
 
 // ─── User Payment Summary ────────────────────────────────────────

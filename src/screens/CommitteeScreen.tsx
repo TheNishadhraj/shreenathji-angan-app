@@ -70,7 +70,7 @@ export const CommitteeScreen: React.FC = () => {
 
   useFocusEffect(
     useCallback(() => {
-      getProfilePhotos().then(setPhotos);
+      getProfilePhotos().then(setPhotos).catch(() => {});
     }, [])
   );
 

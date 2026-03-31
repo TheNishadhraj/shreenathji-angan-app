@@ -152,6 +152,28 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
   // Loading
   const [loading, setLoading] = useState(false);
 
+  // ── Seed default passwords (runs once per device) ──────────
+  useEffect(() => {
+    (async () => {
+      try {
+        const overrides = await getPasswordOverrides();
+        const defaults: Record<string, string> = {
+          "admin@shreenathji.org": "Admin@2026",
+          "divya.rana@gmail.com": "Divya@2026",
+          "satishbhai.patel@gmail.com": "Satish@2026",
+          "dipenbhai.desai@gmail.com": "Dipen@2026",
+        };
+        let seeded = false;
+        for (const [email, pwd] of Object.entries(defaults)) {
+          if (!overrides[email]) {
+            await setPasswordOverride(email, pwd);
+            seeded = true;
+          }
+        }
+      } catch {}
+    })();
+  }, []);
+
   // ── Timers ────────────────────────────────────────────────────
   useEffect(() => {
     if (resendTimer <= 0) return;
@@ -286,7 +308,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
       if (delivered) {
         Alert.alert("OTP Sent", "Verification code sent to your email.");
       } else if (code) {
-        Alert.alert("Dev OTP", `${code}`);
+        Alert.alert("Your OTP", `Your verification code is: ${code}`);
       } else {
         Alert.alert("OTP Sent", "Check your registered email for the verification code.");
       }
@@ -323,7 +345,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
     const { delivered, code } = await generateOTP(regPhone, "register");
     setResendTimer(60);
     if (delivered) Alert.alert("Sent", "New code sent to your email.");
-    else if (code) Alert.alert("Dev OTP", `${code}`);
+    else if (code) Alert.alert("Your OTP", `Your verification code is: ${code}`);
     else Alert.alert("Sent", "Check your registered email for the code.");
   };
 
@@ -340,7 +362,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
       setResendTimer(60);
       setView("forgot-otp");
       if (delivered) Alert.alert("Sent", "Code sent to your registered email.");
-      else if (code) Alert.alert("Dev OTP", `${code}`);
+      else if (code) Alert.alert("Your OTP", `Your verification code is: ${code}`);
       else Alert.alert("Sent", "Check your registered email for the code.");
     } finally { setLoading(false); }
   };
@@ -368,7 +390,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
     const { delivered, code } = await generateOTP(forgotUser.phone, "forgot");
     setResendTimer(60);
     if (delivered) Alert.alert("Sent", "New code sent to your email.");
-    else if (code) Alert.alert("Dev OTP", `${code}`);
+    else if (code) Alert.alert("Your OTP", `Your verification code is: ${code}`);
     else Alert.alert("Sent", "Check your registered email for the code.");
   };
 

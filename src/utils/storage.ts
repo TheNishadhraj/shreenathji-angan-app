@@ -687,16 +687,22 @@ export const clearBiometricEnabled = clearSecureBiometricEnabled;
 
 // ─── OTP Helpers (server-side via Supabase Edge Function + otp_codes table) ──
 
-/** Send OTP to a target (email/phone). Code is NEVER returned to client in production. */
+/**
+ * Send OTP to a target (email/phone).
+ * If the Edge Function delivers via email, `delivered` is true and code is omitted.
+ * Otherwise the code is returned so the app can show it to the user (community app
+ * without paid SMS/email gateway). Verification still happens server-side via RPC.
+ */
 export const generateOTP = async (target: string, action = "verify"): Promise<{ delivered: boolean; code?: string }> => {
   try {
     const { data, error } = await supabase.functions.invoke("send-otp", {
       body: { target: target.toLowerCase().trim(), action },
     });
     if (error) throw error;
-    // Only show code in dev when email delivery isn't configured
-    const code = __DEV__ ? data?.code : undefined;
-    return { delivered: !!data?.delivered, code };
+    // If email was actually delivered, don't show code
+    if (data?.delivered) return { delivered: true };
+    // Email not configured — return code so app can display it
+    return { delivered: false, code: data?.code };
   } catch {
     // Fallback: generate locally and store in Supabase directly
     const bytes = await import("expo-crypto").then((m) => m.getRandomBytesAsync(3));
@@ -710,8 +716,7 @@ export const generateOTP = async (target: string, action = "verify"): Promise<{ 
       action,
       expires_at: expiresAt,
     });
-    // Only return code in dev builds
-    return { delivered: false, code: __DEV__ ? code : undefined };
+    return { delivered: false, code };
   }
 };
 

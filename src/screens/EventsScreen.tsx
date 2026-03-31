@@ -31,6 +31,7 @@ import {
   deleteEvent,
   getRegisteredUsers,
 } from "../utils/storage";
+import { sanitizeText, MAX_LENGTHS } from "../utils/security";
 
 const POST_CATEGORIES = ["Community", "Festivals", "National", "Sports", "Health", "Others"];
 const FILTERS = ["All", "Festivals", "National", "Sports", "Health", "Community", "Others"];
@@ -186,7 +187,7 @@ export const EventsScreen: React.FC<EventsScreenProps> = ({ userEmail, userName,
 
   // ── Comment ───────────────────────────────────────────────────
   const handleComment = async (eventId: number) => {
-    const text = commentTexts[eventId]?.trim();
+    const text = sanitizeText(commentTexts[eventId] ?? "", MAX_LENGTHS.comment);
     if (!text) return;
     const updated = events.map((e) => {
       if (e.id !== eventId) return e;
@@ -279,7 +280,7 @@ export const EventsScreen: React.FC<EventsScreenProps> = ({ userEmail, userName,
 
   // ── Create Post ───────────────────────────────────────────────
   const handlePost = async () => {
-    const text = postText.trim();
+    const text = sanitizeText(postText, MAX_LENGTHS.postText);
     if (!text && !postImageUri) {
       Alert.alert("Empty Post", "Write something or pick a photo to share.");
       return;
@@ -447,6 +448,7 @@ export const EventsScreen: React.FC<EventsScreenProps> = ({ userEmail, userName,
                 placeholderTextColor={colors.textMuted}
                 value={postText}
                 onChangeText={setPostText}
+                maxLength={MAX_LENGTHS.postText}
                 style={{ color: colors.text, fontSize: 14, fontFamily: "Inter_400Regular", minHeight: 40 }}
                 multiline
               />
@@ -836,6 +838,7 @@ export const EventsScreen: React.FC<EventsScreenProps> = ({ userEmail, userName,
                         placeholderTextColor={colors.textMuted}
                         value={commentTexts[item.id] || ""}
                         onChangeText={(t) => setCommentTexts((prev) => ({ ...prev, [item.id]: t }))}
+                        maxLength={MAX_LENGTHS.comment}
                         style={{
                           flex: 1,
                           backgroundColor: isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.04)",

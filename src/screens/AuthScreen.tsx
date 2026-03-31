@@ -27,6 +27,15 @@ import {
   generateOTP,
   verifyOTP,
 } from "../utils/storage";
+import {
+  validatePasswordStrength,
+  isValidEmail,
+  recordFailedAttempt,
+  resetRateLimit,
+  isLockedOut,
+  sanitizeText,
+  MAX_LENGTHS,
+} from "../utils/security";
 import { useTheme } from "../context/ThemeContext";
 import { radius, spacing, palette, shadows, typography } from "../theme/tokens";
 
@@ -137,9 +146,8 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
   const [bioReady, setBioReady] = useState(false);
   const [bioEmail, setBioEmail] = useState<string | null>(null);
 
-  // Rate-limiting
-  const [failedAttempts, setFailedAttempts] = useState(0);
-  const [lockoutUntil, setLockoutUntil] = useState(0);
+  // Rate-limiting (persisted in SecureStore with exponential backoff)
+  const [lockRemaining, setLockRemaining] = useState(0);
 
   // Loading
   const [loading, setLoading] = useState(false);
@@ -150,6 +158,17 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
     const id = setTimeout(() => setResendTimer((t) => t - 1), 1000);
     return () => clearTimeout(id);
   }, [resendTimer]);
+
+  // Refresh lockout on mount and periodically
+  useEffect(() => {
+    const check = async () => {
+      const { locked, remainingSec } = await isLockedOut();
+      setLockRemaining(locked ? remainingSec : 0);
+    };
+    check();
+    const id = setInterval(check, 1000);
+    return () => clearInterval(id);
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -181,9 +200,9 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
 
   // ═══════ LOGIN ════════════════════════════════════════════════
   const handleLogin = async () => {
-    const now = Date.now();
-    if (lockoutUntil > now) {
-      Alert.alert("Locked", `Try again in ${Math.ceil((lockoutUntil - now) / 1000)}s.`);
+    const { locked, remainingSec } = await isLockedOut();
+    if (locked) {
+      Alert.alert("Locked", `Too many failed attempts. Try again in ${remainingSec}s.`);
       return;
     }
     if (!loginEmail.trim() || !loginPassword) {
@@ -195,12 +214,14 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
       const users = await getAllUsers();
       const overrides = await getPasswordOverrides();
       const user = matchUser(users, loginEmail);
-      if (!user) { bumpFail(); return; }
+      if (!user) { await bumpFail(); return; }
       const stored = overrides[user.email.toLowerCase()] || user.password;
+      if (!stored) { await bumpFail(); return; }
       const [ok, migrate] = await verifyPassword(loginPassword, stored);
-      if (!ok) { bumpFail(); return; }
-      setFailedAttempts(0);
-      setLockoutUntil(0);
+      if (!ok) { await bumpFail(); return; }
+      await resetRateLimit();
+      setLockRemaining(0);
+      // Migrate legacy hash to salted hash on successful login
       if (migrate) { try { await setPasswordOverride(user.email, loginPassword); } catch {} }
       await doLogin(user);
     } finally {
@@ -208,14 +229,14 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
     }
   };
 
-  const bumpFail = () => {
-    const n = failedAttempts + 1;
-    setFailedAttempts(n);
-    if (n >= 5) {
-      setLockoutUntil(Date.now() + 60_000);
-      Alert.alert("Locked", "Too many failed attempts. Try again in 60s.");
+  const bumpFail = async () => {
+    const state = await recordFailedAttempt();
+    if (state.attempts >= 5) {
+      const secs = Math.ceil((state.lockoutUntil - Date.now()) / 1000);
+      setLockRemaining(secs);
+      Alert.alert("Locked", `Too many failed attempts. Try again in ${secs}s.`);
     } else {
-      Alert.alert("Login Failed", `Invalid credentials. ${5 - n} attempt${5 - n !== 1 ? "s" : ""} remaining.`);
+      Alert.alert("Login Failed", `Invalid credentials. ${5 - state.attempts} attempt${5 - state.attempts !== 1 ? "s" : ""} remaining.`);
     }
   };
 
@@ -242,10 +263,11 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
   // ═══════ REGISTER ═════════════════════════════════════════════
   const handleRegister = async () => {
     if (!firstName.trim() || !lastName.trim()) { Alert.alert("Required", "Enter your full name."); return; }
-    if (!regEmail.trim() || !regEmail.includes("@")) { Alert.alert("Invalid", "Enter a valid email."); return; }
+    if (!isValidEmail(regEmail)) { Alert.alert("Invalid", "Enter a valid email."); return; }
     if (normalizePhone(regPhone).length < 10) { Alert.alert("Invalid", "Enter a 10-digit phone number."); return; }
     if (!regFlat.trim()) { Alert.alert("Required", "Enter your flat number."); return; }
-    if (regPassword.length < 6) { Alert.alert("Weak", "Password needs 6+ characters."); return; }
+    const pwdErr = validatePasswordStrength(regPassword);
+    if (pwdErr) { Alert.alert("Weak Password", pwdErr); return; }
     if (regPassword !== regConfirm) { Alert.alert("Mismatch", "Passwords don't match."); return; }
     setLoading(true);
     try {
@@ -262,9 +284,11 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
       setResendTimer(60);
       setView("verify-register");
       if (delivered) {
-        Alert.alert("OTP Sent", `Verification code sent to your email.`);
+        Alert.alert("OTP Sent", "Verification code sent to your email.");
       } else if (code) {
-        Alert.alert("Your Verification Code", `${code}\n\nPlease enter this code to verify your account.`);
+        Alert.alert("Dev OTP", `${code}`);
+      } else {
+        Alert.alert("OTP Sent", "Check your registered email for the verification code.");
       }
     } finally { setLoading(false); }
   };
@@ -298,8 +322,9 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
     if (resendTimer > 0) return;
     const { delivered, code } = await generateOTP(regPhone, "register");
     setResendTimer(60);
-    if (delivered) Alert.alert("Sent", `New code sent to your email.`);
-    else if (code) Alert.alert("Your Verification Code", `${code}\n\nPlease enter this code to verify.`);
+    if (delivered) Alert.alert("Sent", "New code sent to your email.");
+    else if (code) Alert.alert("Dev OTP", `${code}`);
+    else Alert.alert("Sent", "Check your registered email for the code.");
   };
 
   // ═══════ FORGOT PASSWORD ══════════════════════════════════════
@@ -314,8 +339,9 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
       const { delivered, code } = await generateOTP(u.phone, "forgot");
       setResendTimer(60);
       setView("forgot-otp");
-      if (delivered) Alert.alert("Sent", `Code sent to your registered email.`);
-      else if (code) Alert.alert("Your Verification Code", `${code}\n\nPlease enter this code to reset your password.`);
+      if (delivered) Alert.alert("Sent", "Code sent to your registered email.");
+      else if (code) Alert.alert("Dev OTP", `${code}`);
+      else Alert.alert("Sent", "Check your registered email for the code.");
     } finally { setLoading(false); }
   };
 
@@ -327,7 +353,8 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
   };
 
   const handleForgotReset = async () => {
-    if (forgotNewPwd.length < 6) { Alert.alert("Weak", "Password needs 6+ characters."); return; }
+    const pwdErr = validatePasswordStrength(forgotNewPwd);
+    if (pwdErr) { Alert.alert("Weak Password", pwdErr); return; }
     if (forgotNewPwd !== forgotConfirm) { Alert.alert("Mismatch", "Passwords don't match."); return; }
     setLoading(true);
     try {
@@ -341,14 +368,15 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
     const { delivered, code } = await generateOTP(forgotUser.phone, "forgot");
     setResendTimer(60);
     if (delivered) Alert.alert("Sent", "New code sent to your email.");
-    else if (code) Alert.alert("Your Verification Code", `${code}\n\nPlease enter this code.`);
+    else if (code) Alert.alert("Dev OTP", `${code}`);
+    else Alert.alert("Sent", "Check your registered email for the code.");
   };
 
   // ── Nav ───────────────────────────────────────────────────────
   const goLogin = () => {
     setView("login"); setLoginEmail(""); setLoginPassword("");
     setForgotId(""); setForgotOtp(""); setForgotNewPwd(""); setForgotConfirm(""); setForgotUser(null);
-    setRegOtp(""); setFailedAttempts(0); setLockoutUntil(0);
+    setRegOtp("");
   };
   const goRegister = () => {
     setView("register"); setFirstName(""); setLastName("");
@@ -435,13 +463,9 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
           </Pressable>
         </View>
 
-        {lockoutUntil > Date.now() ? (
+        {lockRemaining > 0 ? (
           <Text style={{ color: palette.danger, fontSize: 12, textAlign: "center", marginTop: spacing.sm, fontFamily: "Inter_400Regular" }}>
-            Account locked. Try again shortly.
-          </Text>
-        ) : failedAttempts > 0 ? (
-          <Text style={{ color: palette.warning, fontSize: 12, textAlign: "center", marginTop: spacing.sm, fontFamily: "Inter_400Regular" }}>
-            {5 - failedAttempts} attempt{5 - failedAttempts !== 1 ? "s" : ""} remaining
+            Account locked. Try again in {lockRemaining}s.
           </Text>
         ) : null}
 
@@ -498,7 +522,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
         <View style={{ height: spacing.sm }} />
         <Text style={L}>Password</Text>
         <View style={{ position: "relative" }}>
-          <TextInput placeholder="Min. 6 characters" placeholderTextColor={colors.textMuted}
+          <TextInput placeholder="Min. 8 chars, letters + numbers" placeholderTextColor={colors.textMuted}
             value={regPassword} onChangeText={setRegPassword}
             style={mkInput(colors, { paddingRight: 48 })} secureTextEntry={!showRegPwd} maxLength={128} />
           <Pressable onPress={() => setShowRegPwd(!showRegPwd)} style={{ position: "absolute", right: 14, top: 14 }}>
@@ -627,7 +651,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
       </View>
       <View style={card}>
         <Text style={L}>New Password</Text>
-        <TextInput placeholder="Min. 6 characters" placeholderTextColor={colors.textMuted}
+        <TextInput placeholder="Min. 8 chars, letters + numbers" placeholderTextColor={colors.textMuted}
           value={forgotNewPwd} onChangeText={setForgotNewPwd} style={I} secureTextEntry maxLength={128} />
         <View style={{ height: spacing.sm }} />
         <Text style={L}>Confirm Password</Text>

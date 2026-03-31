@@ -21,6 +21,7 @@ import {
   getPolls, addPoll, closePoll,
   type PaymentType, type ComplaintRecord, type BookingRecord,
 } from "../utils/storage";
+import { sanitizeText, MAX_LENGTHS } from "../utils/security";
 
 export const AdminScreen: React.FC = () => {
   const { colors } = useTheme();
@@ -118,15 +119,18 @@ export const AdminScreen: React.FC = () => {
   };
 
   const savePayType = async () => {
-    if (!payName.trim()) return;
+    const safeName = sanitizeText(payName, MAX_LENGTHS.paymentTypeName);
+    if (!safeName) return;
     const amount = Number(payAmount) || 0;
+    const safePeriod = sanitizeText(payPeriod, MAX_LENGTHS.paymentTypePeriod);
+    const safeDesc = sanitizeText(payDesc, MAX_LENGTHS.paymentTypeDesc);
     let updated: PaymentType[];
     if (editPay) {
       updated = payTypes.map((t) =>
-        t.id === editPay.id ? { ...t, name: payName.trim(), amount, period: payPeriod.trim(), description: payDesc.trim() } : t
+        t.id === editPay.id ? { ...t, name: safeName, amount, period: safePeriod, description: safeDesc } : t
       );
     } else {
-      updated = [...payTypes, { id: Date.now(), name: payName.trim(), amount, period: payPeriod.trim(), description: payDesc.trim() }];
+      updated = [...payTypes, { id: Date.now(), name: safeName, amount, period: safePeriod, description: safeDesc }];
     }
     await setPaymentTypes(updated);
     setLocalPayTypes(updated);
@@ -134,7 +138,7 @@ export const AdminScreen: React.FC = () => {
 
     await addNotification({
       title: "Payment Type Changed",
-      message: `${editPay ? "Updated" : "Added"}: ${payName.trim()} — ${currency(amount)}`,
+      message: `${editPay ? "Updated" : "Added"}: ${safeName} — ${currency(amount)}`,
       icon: "💳",
       date: new Date().toISOString().split("T")[0],
       targetType: "all",
@@ -164,13 +168,15 @@ export const AdminScreen: React.FC = () => {
 
   // ─── Send Notification ─────────────────────────────────────────
   const sendNotification = async () => {
-    if (!notifyTitle.trim() || !notifyMessage.trim()) {
+    const safeTitle = sanitizeText(notifyTitle, MAX_LENGTHS.notificationTitle);
+    const safeMessage = sanitizeText(notifyMessage, MAX_LENGTHS.notificationMessage);
+    if (!safeTitle || !safeMessage) {
       Alert.alert("Required", "Please fill title and message.");
       return;
     }
     await addNotification({
-      title: notifyTitle.trim(),
-      message: notifyMessage.trim(),
+      title: safeTitle,
+      message: safeMessage,
       icon: "📢",
       date: new Date().toISOString().split("T")[0],
       targetType: "all",
@@ -221,14 +227,16 @@ export const AdminScreen: React.FC = () => {
   };
 
   const savePoll = async () => {
-    if (!pollTitle.trim()) { Alert.alert("Required", "Poll question is required."); return; }
-    const validOptions = pollOptions.filter((o) => o.trim().length > 0);
+    const safeTitle = sanitizeText(pollTitle, MAX_LENGTHS.pollTitle);
+    if (!safeTitle) { Alert.alert("Required", "Poll question is required."); return; }
+    const validOptions = pollOptions.map((o) => sanitizeText(o, MAX_LENGTHS.pollOption)).filter((o) => o.length > 0);
     if (validOptions.length < 2) { Alert.alert("Required", "At least 2 options required."); return; }
+    const safeDesc = sanitizeText(pollDesc, MAX_LENGTHS.pollDesc);
     setSavingPoll(true);
     try {
       const pollData = {
-        question: pollTitle.trim(),
-        description: pollDesc.trim(),
+        question: safeTitle,
+        description: safeDesc,
         deadline: pollDeadline.trim() || null,
         type: pollType,
         status: "Active",
@@ -422,6 +430,7 @@ export const AdminScreen: React.FC = () => {
                 placeholderTextColor={colors.textMuted}
                 value={notifyTitle}
                 onChangeText={setNotifyTitle}
+                maxLength={MAX_LENGTHS.notificationTitle}
                 style={{ borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: 12, marginBottom: spacing.sm, color: colors.text }}
               />
               <TextInput
@@ -430,6 +439,7 @@ export const AdminScreen: React.FC = () => {
                 value={notifyMessage}
                 onChangeText={setNotifyMessage}
                 multiline
+                maxLength={MAX_LENGTHS.notificationMessage}
                 style={{ borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: 12, marginBottom: spacing.md, color: colors.text, minHeight: 80, textAlignVertical: "top" }}
               />
               <Pressable
@@ -601,10 +611,10 @@ export const AdminScreen: React.FC = () => {
             <Text style={{ fontWeight: "700", fontSize: 18, color: colors.text, marginBottom: spacing.md }}>
               {editPay ? "Edit Payment Type" : "Add Payment Type"}
             </Text>
-            <TextInput placeholder="Name" placeholderTextColor={colors.textMuted} value={payName} onChangeText={setPayName} style={{ borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: 12, marginBottom: spacing.sm, color: colors.text }} />
-            <TextInput placeholder="Amount" placeholderTextColor={colors.textMuted} value={payAmount} onChangeText={setPayAmount} keyboardType="numeric" style={{ borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: 12, marginBottom: spacing.sm, color: colors.text }} />
-            <TextInput placeholder="Period" placeholderTextColor={colors.textMuted} value={payPeriod} onChangeText={setPayPeriod} style={{ borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: 12, marginBottom: spacing.sm, color: colors.text }} />
-            <TextInput placeholder="Description" placeholderTextColor={colors.textMuted} value={payDesc} onChangeText={setPayDesc} style={{ borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: 12, marginBottom: spacing.md, color: colors.text }} />
+            <TextInput placeholder="Name" placeholderTextColor={colors.textMuted} value={payName} onChangeText={setPayName} maxLength={MAX_LENGTHS.paymentTypeName} style={{ borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: 12, marginBottom: spacing.sm, color: colors.text }} />
+            <TextInput placeholder="Amount" placeholderTextColor={colors.textMuted} value={payAmount} onChangeText={setPayAmount} keyboardType="numeric" maxLength={10} style={{ borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: 12, marginBottom: spacing.sm, color: colors.text }} />
+            <TextInput placeholder="Period" placeholderTextColor={colors.textMuted} value={payPeriod} onChangeText={setPayPeriod} maxLength={MAX_LENGTHS.paymentTypePeriod} style={{ borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: 12, marginBottom: spacing.sm, color: colors.text }} />
+            <TextInput placeholder="Description" placeholderTextColor={colors.textMuted} value={payDesc} onChangeText={setPayDesc} maxLength={MAX_LENGTHS.paymentTypeDesc} style={{ borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: 12, marginBottom: spacing.md, color: colors.text }} />
             <View style={{ flexDirection: "row", gap: spacing.sm }}>
               <Pressable onPress={() => setPayModal(false)} style={{ flex: 1, padding: 14, borderRadius: radius.md, backgroundColor: colors.border, alignItems: "center" }}>
                 <Text style={{ color: colors.text, fontWeight: "600" }}>Cancel</Text>
@@ -630,6 +640,7 @@ export const AdminScreen: React.FC = () => {
                 placeholderTextColor={colors.textMuted}
                 value={pollTitle}
                 onChangeText={setPollTitle}
+                maxLength={MAX_LENGTHS.pollTitle}
                 style={{ borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: 12, marginBottom: spacing.sm, color: colors.text }}
               />
 
@@ -640,6 +651,7 @@ export const AdminScreen: React.FC = () => {
                 value={pollDesc}
                 onChangeText={setPollDesc}
                 multiline
+                maxLength={MAX_LENGTHS.pollDesc}
                 style={{ borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: 12, marginBottom: spacing.sm, color: colors.text, minHeight: 60, textAlignVertical: "top" }}
               />
 
@@ -681,6 +693,7 @@ export const AdminScreen: React.FC = () => {
                       updated[idx] = val;
                       setPollOptions(updated);
                     }}
+                    maxLength={MAX_LENGTHS.pollOption}
                     style={{ flex: 1, borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: 12, color: colors.text }}
                   />
                   {pollOptions.length > 2 ? (

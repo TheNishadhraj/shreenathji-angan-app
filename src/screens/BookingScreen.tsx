@@ -23,6 +23,7 @@ import {
   updateBookingPayment,
   type BookingRecord,
 } from "../utils/storage";
+import { sanitizeText, MAX_LENGTHS } from "../utils/security";
 
 // ── Calendar ────────────────────────────────────────────────────
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -216,7 +217,8 @@ export const BookingScreen: React.FC = () => {
   };
 
   const handleBook = async (venueId: number) => {
-    if (!purpose.trim()) {
+    const safePurpose = sanitizeText(purpose, MAX_LENGTHS.bookingPurpose);
+    if (!safePurpose) {
       Alert.alert("Required", "Please enter a purpose.");
       return;
     }
@@ -237,7 +239,7 @@ export const BookingScreen: React.FC = () => {
     const entry = await addBooking({
       venue: venue.name,
       date,
-      purpose: purpose.trim(),
+      purpose: safePurpose,
       bookedBy: currentUser?.name ?? "Resident",
       bookedByEmail: currentUser?.email ?? "",
       status: "Pending",
@@ -384,6 +386,7 @@ export const BookingScreen: React.FC = () => {
                   placeholderTextColor={colors.textMuted}
                   value={purpose}
                   onChangeText={setPurpose}
+                  maxLength={MAX_LENGTHS.bookingPurpose}
                   style={{
                     borderWidth: 1,
                     borderColor: colors.border,

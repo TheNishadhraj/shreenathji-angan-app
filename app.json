@@ -33,6 +33,9 @@
         "projectId": "b2ed9896-4aac-4c82-8eab-9bacbb80df9d"
       }
     },
-    "owner": "nishahdraj"
+    "owner": "nishahdraj",
+    "plugins": [
+      "expo-secure-store"
+    ]
   }
 }

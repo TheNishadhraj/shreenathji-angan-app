@@ -418,7 +418,6 @@ export const SocietyData = {
       role: "Resident",
       email: "divya.rana@gmail.com",
       phone: "+91 8320826946",
-      password: "SA@6946"
     },
     {
       id: 2,
@@ -428,7 +427,6 @@ export const SocietyData = {
       role: "Resident",
       email: "chandrapal.vaghela@gmail.com",
       phone: "+91 7874267317",
-      password: "SA@7317"
     },
     {
       id: 3,
@@ -438,7 +436,6 @@ export const SocietyData = {
       role: "Resident",
       email: "derasari.devashankar@gmail.com",
       phone: "+91 9316223021",
-      password: "SA@3021"
     },
     {
       id: 4,
@@ -448,7 +445,6 @@ export const SocietyData = {
       role: "Resident",
       email: "derasari.devshanker@gmail.com",
       phone: "+91 9904122510",
-      password: "SA@2510"
     },
     {
       id: 5,
@@ -458,7 +454,6 @@ export const SocietyData = {
       role: "Resident",
       email: "jaiswal.natvarlal@gmail.com",
       phone: "+91 9712935262",
-      password: "SA@5262"
     },
     {
       id: 6,
@@ -468,7 +463,6 @@ export const SocietyData = {
       role: "Resident",
       email: "kiran.patel@gmail.com",
       phone: "+91 9904988770",
-      password: "SA@8770"
     },
     {
       id: 7,
@@ -478,7 +472,6 @@ export const SocietyData = {
       role: "Resident",
       email: "jignesh.thakkar@gmail.com",
       phone: "+91 9376221431",
-      password: "SA@1431"
     },
     {
       id: 8,
@@ -488,7 +481,6 @@ export const SocietyData = {
       role: "Resident",
       email: "mahendrabhai.chauhan@gmail.com",
       phone: "+91 9574804504",
-      password: "SA@4504"
     },
     {
       id: 9,
@@ -498,7 +490,6 @@ export const SocietyData = {
       role: "Resident",
       email: "dhananjay.singh@gmail.com",
       phone: "+91 9978201501",
-      password: "SA@1501"
     },
     {
       id: 10,
@@ -508,7 +499,6 @@ export const SocietyData = {
       role: "Resident",
       email: "mansi.varia@gmail.com",
       phone: "+91 8469261749",
-      password: "SA@1749"
     },
     {
       id: 11,
@@ -518,7 +508,6 @@ export const SocietyData = {
       role: "Resident",
       email: "nishaben.jayswal@gmail.com",
       phone: "+91 9662003657",
-      password: "SA@3657"
     },
     {
       id: 12,
@@ -528,7 +517,6 @@ export const SocietyData = {
       role: "Resident",
       email: "ankur.desai@gmail.com",
       phone: "+91 7201878572",
-      password: "SA@8572"
     },
     {
       id: 13,
@@ -538,7 +526,6 @@ export const SocietyData = {
       role: "Resident",
       email: "gn.choudhary@gmail.com",
       phone: "+91 9624849326",
-      password: "SA@9326"
     },
     {
       id: 14,
@@ -548,7 +535,6 @@ export const SocietyData = {
       role: "Committee Member",
       email: "sidhhrajsinh.zala@gmail.com",
       phone: "+91 9737648292",
-      password: "SA@8292"
     },
     {
       id: 15,
@@ -558,7 +544,6 @@ export const SocietyData = {
       role: "Resident",
       email: "ashvinkumar.joshi@gmail.com",
       phone: "+91 9428131858",
-      password: "SA@1858"
     },
     {
       id: 16,
@@ -568,7 +553,6 @@ export const SocietyData = {
       role: "Committee Member",
       email: "miteshbhai.raval@gmail.com",
       phone: "+91 9408490909",
-      password: "SA@0909"
     },
     {
       id: 17,
@@ -578,7 +562,6 @@ export const SocietyData = {
       role: "Resident",
       email: "pradipsinh.rathod@gmail.com",
       phone: "+91 9924822341",
-      password: "SA@2341"
     },
     {
       id: 18,
@@ -588,7 +571,6 @@ export const SocietyData = {
       role: "Resident",
       email: "himanshukumar.mahida@gmail.com",
       phone: "+91 9426360855",
-      password: "SA@0855"
     },
     {
       id: 19,
@@ -598,7 +580,6 @@ export const SocietyData = {
       role: "Committee Member",
       email: "nishadhraj.vasava@gmail.com",
       phone: "+91 9998590102",
-      password: "SA@0102"
     },
     {
       id: 20,
@@ -608,7 +589,6 @@ export const SocietyData = {
       role: "Resident",
       email: "anilkumar.sharma@gmail.com",
       phone: "+91 9687233725",
-      password: "SA@3725"
     },
     {
       id: 21,
@@ -618,7 +598,6 @@ export const SocietyData = {
       role: "Resident",
       email: "priyalkumar.jayswal@gmail.com",
       phone: "+91 9925175671",
-      password: "SA@5671"
     },
     {
       id: 22,
@@ -628,7 +607,6 @@ export const SocietyData = {
       role: "Resident",
       email: "shitalben.varia@gmail.com",
       phone: "+91 9974393674",
-      password: "SA@3674"
     },
     {
       id: 23,
@@ -638,7 +616,6 @@ export const SocietyData = {
       role: "Resident",
       email: "alpeshbhai.k.darji@gmail.com",
       phone: "987951859",
-      password: "SA@1859"
     },
     {
       id: 24,
@@ -648,7 +625,6 @@ export const SocietyData = {
       role: "Resident",
       email: "alpeshbhai.darji@gmail.com",
       phone: "+91 9428879240",
-      password: "SA@9240"
     },
     {
       id: 25,
@@ -658,7 +634,6 @@ export const SocietyData = {
       role: "Resident",
       email: "thummar.k@gmail.com",
       phone: "+91 9998567450",
-      password: "SA@7450"
     },
     {
       id: 26,
@@ -668,7 +643,6 @@ export const SocietyData = {
       role: "Resident",
       email: "vasava.rasikbhai@gmail.com",
       phone: "+91 9737386615",
-      password: "SA@6615"
     },
     {
       id: 27,
@@ -678,7 +652,6 @@ export const SocietyData = {
       role: "Resident",
       email: "suneel.jaiswal@gmail.com",
       phone: "+91 9560323111",
-      password: "SA@3111"
     },
     {
       id: 28,
@@ -688,7 +661,6 @@ export const SocietyData = {
       role: "Resident",
       email: "ujaval.mehta@gmail.com",
       phone: "+91 9979040613",
-      password: "SA@0613"
     },
     {
       id: 29,
@@ -698,7 +670,6 @@ export const SocietyData = {
       role: "Resident",
       email: "vimalkumar.patel@gmail.com",
       phone: "+91 5993384373",
-      password: "SA@4373"
     },
     {
       id: 30,
@@ -708,7 +679,6 @@ export const SocietyData = {
       role: "Resident",
       email: "khumsinhbhai.damor@gmail.com",
       phone: "+91 9714162475",
-      password: "SA@2475"
     },
     {
       id: 31,
@@ -718,7 +688,6 @@ export const SocietyData = {
       role: "Resident",
       email: "keyurkumar.patel@gmail.com",
       phone: "+91 9033462478",
-      password: "SA@2478"
     },
     {
       id: 32,
@@ -728,7 +697,6 @@ export const SocietyData = {
       role: "Resident",
       email: "tatsattushar.pandya@gmail.com",
       phone: "+91 9723285999",
-      password: "SA@5999"
     },
     {
       id: 33,
@@ -738,7 +706,6 @@ export const SocietyData = {
       role: "Resident",
       email: "navneet@gmail.com",
       phone: "+91 9998974532",
-      password: "SA@4532"
     },
     {
       id: 34,
@@ -748,7 +715,6 @@ export const SocietyData = {
       role: "Resident",
       email: "prashant.rana@gmail.com",
       phone: "+91 9428828473",
-      password: "SA@8473"
     },
     {
       id: 35,
@@ -758,7 +724,6 @@ export const SocietyData = {
       role: "Resident",
       email: "bhagirathsinh.barad@gmail.com",
       phone: "+91 9998940042",
-      password: "SA@0042"
     },
     {
       id: 36,
@@ -768,7 +733,6 @@ export const SocietyData = {
       role: "Resident",
       email: "jigar.pandya@gmail.com",
       phone: "+91 9825779585",
-      password: "SA@9585"
     },
     {
       id: 37,
@@ -778,7 +742,6 @@ export const SocietyData = {
       role: "Resident",
       email: "shetalkumar.shah@gmail.com",
       phone: "+91 8780175413",
-      password: "SA@5413"
     },
     {
       id: 38,
@@ -788,7 +751,6 @@ export const SocietyData = {
       role: "Committee Member",
       email: "jagdishbhai.patel@gmail.com",
       phone: "+91 9429367932",
-      password: "SA@7932"
     },
     {
       id: 39,
@@ -798,7 +760,6 @@ export const SocietyData = {
       role: "Resident",
       email: "ujjawal.pandya@gmail.com",
       phone: "+91 9983591748",
-      password: "SA@1748"
     },
     {
       id: 40,
@@ -808,7 +769,6 @@ export const SocietyData = {
       role: "Treasurer",
       email: "kiritbhai.modi@gmail.com",
       phone: "+91 9429053758",
-      password: "SA@3758"
     },
     {
       id: 41,
@@ -818,7 +778,6 @@ export const SocietyData = {
       role: "Resident",
       email: "niraj.mehta@gmail.com",
       phone: "+91 9727785568",
-      password: "SA@5568"
     },
     {
       id: 42,
@@ -828,7 +787,6 @@ export const SocietyData = {
       role: "Resident",
       email: "swetang.soni@gmail.com",
       phone: "+91 9913807215",
-      password: "SA@7215"
     },
     {
       id: 43,
@@ -838,7 +796,6 @@ export const SocietyData = {
       role: "Resident",
       email: "sheetal.bhatiya@gmail.com",
       phone: "+91 9879939633",
-      password: "SA@9633"
     },
     {
       id: 44,
@@ -848,7 +805,6 @@ export const SocietyData = {
       role: "Resident",
       email: "mukeshkumar.shah@gmail.com",
       phone: "+91 9428366325",
-      password: "SA@6325"
     },
     {
       id: 45,
@@ -858,7 +814,6 @@ export const SocietyData = {
       role: "Resident",
       email: "rakesh.rana@gmail.com",
       phone: "+91 9724980310",
-      password: "SA@0310"
     },
     {
       id: 46,
@@ -868,7 +823,6 @@ export const SocietyData = {
       role: "Resident",
       email: "amit.khandelwal@gmail.com",
       phone: "+91 9427344202",
-      password: "SA@4202"
     },
     {
       id: 47,
@@ -878,7 +832,6 @@ export const SocietyData = {
       role: "Resident",
       email: "jagdish.rathva@gmail.com",
       phone: "+91 9727132366",
-      password: "SA@2366"
     },
     {
       id: 48,
@@ -888,7 +841,6 @@ export const SocietyData = {
       role: "Resident",
       email: "patel.gaurav@gmail.com",
       phone: "+91 8866480415",
-      password: "SA@0415"
     },
     {
       id: 49,
@@ -898,7 +850,6 @@ export const SocietyData = {
       role: "Resident",
       email: "pritiben.pandit@gmail.com",
       phone: "+91 9428660988",
-      password: "SA@0988"
     },
     {
       id: 50,
@@ -908,7 +859,6 @@ export const SocietyData = {
       role: "Resident",
       email: "kapilaben.vasava@gmail.com",
       phone: "+91 9724742484",
-      password: "SA@2484"
     },
     {
       id: 51,
@@ -918,7 +868,6 @@ export const SocietyData = {
       role: "Resident",
       email: "tejaskumar.darji@gmail.com",
       phone: "+91 9725433950",
-      password: "SA@3950"
     },
     {
       id: 52,
@@ -928,7 +877,6 @@ export const SocietyData = {
       role: "Resident",
       email: "tarpan.chauhan@gmail.com",
       phone: "+91 9998413430",
-      password: "SA@3430"
     },
     {
       id: 53,
@@ -938,7 +886,6 @@ export const SocietyData = {
       role: "Resident",
       email: "bihola.himmatsinh@gmail.com",
       phone: "+91 7600006428",
-      password: "SA@6428"
     },
     {
       id: 54,
@@ -948,7 +895,6 @@ export const SocietyData = {
       role: "Resident",
       email: "ajitsinh.vaghela@gmail.com",
       phone: "+91 7002501998",
-      password: "SA@1998"
     },
     {
       id: 55,
@@ -958,7 +904,6 @@ export const SocietyData = {
       role: "Resident",
       email: "vishal.sodha@gmail.com",
       phone: "+91 7984232993",
-      password: "SA@2993"
     },
     {
       id: 56,
@@ -968,7 +913,6 @@ export const SocietyData = {
       role: "Resident",
       email: "ankita.soni@gmail.com",
       phone: "+91 9426984929",
-      password: "SA@4929"
     },
     {
       id: 57,
@@ -978,7 +922,6 @@ export const SocietyData = {
       role: "Resident",
       email: "nakum.keshu@gmail.com",
       phone: "+91 9724328293",
-      password: "SA@8293"
     },
     {
       id: 58,
@@ -988,7 +931,6 @@ export const SocietyData = {
       role: "Resident",
       email: "dipti.rana@gmail.com",
       phone: "+91 8128670834",
-      password: "SA@0834"
     },
     {
       id: 59,
@@ -998,7 +940,6 @@ export const SocietyData = {
       role: "Resident",
       email: "mamtaben.patel@gmail.com",
       phone: "+91 8140441555",
-      password: "SA@1555"
     },
     {
       id: 60,
@@ -1008,7 +949,6 @@ export const SocietyData = {
       role: "Resident",
       email: "aesha.bhatt@gmail.com",
       phone: "+91 7861024273",
-      password: "SA@4273"
     },
     {
       id: 61,
@@ -1018,7 +958,6 @@ export const SocietyData = {
       role: "Resident",
       email: "sk.roy@gmail.com",
       phone: "+91 9054422905",
-      password: "SA@2905"
     },
     {
       id: 62,
@@ -1028,7 +967,6 @@ export const SocietyData = {
       role: "Resident",
       email: "rajeshwari.vaghela@gmail.com",
       phone: "+91 9979927323",
-      password: "SA@7323"
     },
     {
       id: 63,
@@ -1038,7 +976,6 @@ export const SocietyData = {
       role: "Resident",
       email: "bhartiben.suthar@gmail.com",
       phone: "+91 9825326192",
-      password: "SA@6192"
     },
     {
       id: 64,
@@ -1048,7 +985,6 @@ export const SocietyData = {
       role: "Resident",
       email: "bharat.rajput@gmail.com",
       phone: "+91 9978901032",
-      password: "SA@1032"
     },
     {
       id: 65,
@@ -1058,7 +994,6 @@ export const SocietyData = {
       role: "Resident",
       email: "harish.rawat@gmail.com",
       phone: "+91 8488892335",
-      password: "SA@2335"
     },
     {
       id: 66,
@@ -1068,7 +1003,6 @@ export const SocietyData = {
       role: "Resident",
       email: "chauhan.shashikant@gmail.com",
       phone: "+91 9925941598",
-      password: "SA@1598"
     },
     {
       id: 67,
@@ -1078,7 +1012,6 @@ export const SocietyData = {
       role: "Resident",
       email: "parmar.sinh@gmail.com",
       phone: "+91 9537842571",
-      password: "SA@2571"
     },
     {
       id: 68,
@@ -1088,7 +1021,6 @@ export const SocietyData = {
       role: "Resident",
       email: "kaminiben.solanki@gmail.com",
       phone: "+91 7383827699",
-      password: "SA@7699"
     },
     {
       id: 69,
@@ -1098,7 +1030,6 @@ export const SocietyData = {
       role: "Committee Member",
       email: "yagnikkumar.suthar@gmail.com",
       phone: "+91 9601421607",
-      password: "SA@1607"
     },
     {
       id: 70,
@@ -1108,7 +1039,6 @@ export const SocietyData = {
       role: "Resident",
       email: "reema.mistry@gmail.com",
       phone: "+91 8780397056",
-      password: "SA@7056"
     },
     {
       id: 71,
@@ -1118,7 +1048,6 @@ export const SocietyData = {
       role: "Resident",
       email: "ketanbhai.ukani@gmail.com",
       phone: "+91 9723434300",
-      password: "SA@4300"
     },
     {
       id: 72,
@@ -1128,7 +1057,6 @@ export const SocietyData = {
       role: "Resident",
       email: "virenkumar.gandhi@gmail.com",
       phone: "+91 9725008746",
-      password: "SA@8746"
     },
     {
       id: 73,
@@ -1138,7 +1066,6 @@ export const SocietyData = {
       role: "Resident",
       email: "bindiben.gandhi@gmail.com",
       phone: "+91 9825132087",
-      password: "SA@2087"
     },
     {
       id: 74,
@@ -1148,7 +1075,6 @@ export const SocietyData = {
       role: "Resident",
       email: "atulkumar.trivedi@gmail.com",
       phone: "+91 9408947156",
-      password: "SA@7156"
     },
     {
       id: 75,
@@ -1158,7 +1084,6 @@ export const SocietyData = {
       role: "Resident",
       email: "panchal.shankarlal@gmail.com",
       phone: "+91 9978256300",
-      password: "SA@6300"
     },
     {
       id: 76,
@@ -1168,7 +1093,6 @@ export const SocietyData = {
       role: "Committee Member",
       email: "kiritbhai.waghela@gmail.com",
       phone: "+91 9898965931",
-      password: "SA@5931"
     },
     {
       id: 77,
@@ -1178,7 +1102,6 @@ export const SocietyData = {
       role: "Resident",
       email: "girishbhai.solanki@gmail.com",
       phone: "+91 7575016634",
-      password: "SA@6634"
     },
     {
       id: 78,
@@ -1188,7 +1111,6 @@ export const SocietyData = {
       role: "Committee Member",
       email: "jaydipsinh.gohil@gmail.com",
       phone: "+91 9099034988",
-      password: "SA@4988"
     },
     {
       id: 79,
@@ -1198,7 +1120,6 @@ export const SocietyData = {
       role: "Resident",
       email: "kinjalukhatri@gmail.com",
       phone: "+91 9825382470",
-      password: "SA@2470"
     },
     {
       id: 80,
@@ -1208,7 +1129,6 @@ export const SocietyData = {
       role: "Resident",
       email: "kinjal.khatri@gmail.com",
       phone: "+91 9426023149",
-      password: "SA@3149"
     },
     {
       id: 81,
@@ -1218,7 +1138,6 @@ export const SocietyData = {
       role: "Resident",
       email: "subhash.parmar@gmail.com",
       phone: "+91 7984285380",
-      password: "SA@5380"
     },
     {
       id: 82,
@@ -1228,7 +1147,6 @@ export const SocietyData = {
       role: "Resident",
       email: "patel.ghanshyambhai@gmail.com",
       phone: "+91 9712994638",
-      password: "SA@4638"
     },
     {
       id: 83,
@@ -1238,7 +1156,6 @@ export const SocietyData = {
       role: "Resident",
       email: "makwana.ambalal@gmail.com",
       phone: "+91 9898002160",
-      password: "SA@2160"
     },
     {
       id: 84,
@@ -1248,7 +1165,6 @@ export const SocietyData = {
       role: "Resident",
       email: "makwana.ambalal6686@gmail.com",
       phone: "+91 9978336686",
-      password: "SA@6686"
     },
     {
       id: 85,
@@ -1258,7 +1174,6 @@ export const SocietyData = {
       role: "Resident",
       email: "manojbhai.vasava@gmail.com",
       phone: "+91 6353946031",
-      password: "SA@6031"
     },
     {
       id: 86,
@@ -1268,7 +1183,6 @@ export const SocietyData = {
       role: "Resident",
       email: "arvindbhai.rohit@gmail.com",
       phone: "+91 9664972842",
-      password: "SA@2842"
     },
     {
       id: 87,
@@ -1278,7 +1192,6 @@ export const SocietyData = {
       role: "Resident",
       email: "damini.purohit@gmail.com",
       phone: "+91 8200532249",
-      password: "SA@2249"
     },
     {
       id: 88,
@@ -1288,7 +1201,6 @@ export const SocietyData = {
       role: "Resident",
       email: "leela.devi@gmail.com",
       phone: "+91 9898074714",
-      password: "SA@4714"
     },
     {
       id: 89,
@@ -1298,7 +1210,6 @@ export const SocietyData = {
       role: "Resident",
       email: "ranjanben.vasava@gmail.com",
       phone: "+91 9879042612",
-      password: "SA@2612"
     },
     {
       id: 90,
@@ -1308,7 +1219,6 @@ export const SocietyData = {
       role: "Resident",
       email: "sanjaybhai.vasava@gmail.com",
       phone: "+91 9825768648",
-      password: "SA@8648"
     },
     {
       id: 91,
@@ -1318,7 +1228,6 @@ export const SocietyData = {
       role: "Resident",
       email: "nilesh.parmar@gmail.com",
       phone: "+91 9429257067",
-      password: "SA@7067"
     },
     {
       id: 92,
@@ -1328,7 +1237,6 @@ export const SocietyData = {
       role: "Resident",
       email: "dhiraj.panchal@gmail.com",
       phone: "+91 9428593785",
-      password: "SA@3785"
     },
     {
       id: 93,
@@ -1338,7 +1246,6 @@ export const SocietyData = {
       role: "Secretary",
       email: "satishbhai.patel@gmail.com",
       phone: "+91 8980003836",
-      password: "SA@3836"
     },
     {
       id: 94,
@@ -1348,7 +1255,6 @@ export const SocietyData = {
       role: "Resident",
       email: "kaushal.rajput@gmail.com",
       phone: "+91 8559908750",
-      password: "SA@8750"
     },
     {
       id: 95,
@@ -1358,7 +1264,6 @@ export const SocietyData = {
       role: "Resident",
       email: "vrajesh.patel@gmail.com",
       phone: "+91 9687650292",
-      password: "SA@0292"
     },
     {
       id: 96,
@@ -1368,7 +1273,6 @@ export const SocietyData = {
       role: "Resident",
       email: "jyoti.parmar@gmail.com",
       phone: "+91 9974571500",
-      password: "SA@1500"
     },
     {
       id: 97,
@@ -1378,7 +1282,6 @@ export const SocietyData = {
       role: "Vice President",
       email: "harshadbhai.rohit@gmail.com",
       phone: "+91 9974392312",
-      password: "SA@2312"
     },
     {
       id: 98,
@@ -1388,7 +1291,6 @@ export const SocietyData = {
       role: "Committee Member",
       email: "sashikantbhai.mehta@gmail.com",
       phone: "+91 9662675611",
-      password: "SA@5611"
     },
     {
       id: 99,
@@ -1398,7 +1300,6 @@ export const SocietyData = {
       role: "Resident",
       email: "usha.wankhade@gmail.com",
       phone: "+91 9924731842",
-      password: "SA@1842"
     },
     {
       id: 100,
@@ -1408,7 +1309,6 @@ export const SocietyData = {
       role: "Resident",
       email: "kapila.parmar@gmail.com",
       phone: "+91 8153037683",
-      password: "SA@7683"
     },
     {
       id: 101,
@@ -1418,7 +1318,6 @@ export const SocietyData = {
       role: "Resident",
       email: "harsh.shah@gmail.com",
       phone: "+91 6352162296",
-      password: "SA@2296"
     },
     {
       id: 102,
@@ -1428,7 +1327,6 @@ export const SocietyData = {
       role: "Resident",
       email: "mrugesh.rajput@gmail.com",
       phone: "+91 9099722244",
-      password: "SA@2244"
     },
     {
       id: 103,
@@ -1438,7 +1336,6 @@ export const SocietyData = {
       role: "Resident",
       email: "anuradha.banerjee@gmail.com",
       phone: "+91 6394330712",
-      password: "SA@0712"
     },
     {
       id: 104,
@@ -1448,7 +1345,6 @@ export const SocietyData = {
       role: "Resident",
       email: "ashish.shah@gmail.com",
       phone: "+91 9327120026",
-      password: "SA@0026"
     },
     {
       id: 105,
@@ -1458,7 +1354,6 @@ export const SocietyData = {
       role: "Resident",
       email: "sushila.singh@gmail.com",
       phone: "+91 9979990923",
-      password: "SA@0923"
     },
     {
       id: 106,
@@ -1468,7 +1363,6 @@ export const SocietyData = {
       role: "Resident",
       email: "narayanbhai@gmail.com",
       phone: "+91 9427671036",
-      password: "SA@1036"
     },
     {
       id: 107,
@@ -1478,7 +1372,6 @@ export const SocietyData = {
       role: "Resident",
       email: "chandreshbhai.shah@gmail.com",
       phone: "+91 9978338877",
-      password: "SA@8877"
     },
     {
       id: 108,
@@ -1488,7 +1381,6 @@ export const SocietyData = {
       role: "Resident",
       email: "sarojba.gohil@gmail.com",
       phone: "+91 6352863038",
-      password: "SA@3038"
     },
     {
       id: 109,
@@ -1498,7 +1390,6 @@ export const SocietyData = {
       role: "Resident",
       email: "viral.shah@gmail.com",
       phone: "+91 7600017596",
-      password: "SA@7596"
     },
     {
       id: 110,
@@ -1508,7 +1399,6 @@ export const SocietyData = {
       role: "Resident",
       email: "mehul.gandhi@gmail.com",
       phone: "+91 8980901214",
-      password: "SA@1214"
     },
     {
       id: 111,
@@ -1518,7 +1408,6 @@ export const SocietyData = {
       role: "Resident",
       email: "vishal.mistry@gmail.com",
       phone: "+91 9879603487",
-      password: "SA@3487"
     },
     {
       id: 113,
@@ -1528,7 +1417,6 @@ export const SocietyData = {
       role: "Committee Member",
       email: "ranjitsinh.sisodiya@gmail.com",
       phone: "+91 9727856353",
-      password: "SA@6353"
     },
     {
       id: 114,
@@ -1538,7 +1426,6 @@ export const SocietyData = {
       role: "Resident",
       email: "paraskumar.patel@gmail.com",
       phone: "+91 8238003113",
-      password: "SA@3113"
     },
     {
       id: 115,
@@ -1548,7 +1435,6 @@ export const SocietyData = {
       role: "Resident",
       email: "jagdish.makwana@gmail.com",
       phone: "+91 8193800010",
-      password: "SA@0010"
     },
     {
       id: 116,
@@ -1558,7 +1444,6 @@ export const SocietyData = {
       role: "Resident",
       email: "jebi.gandharva@gmail.com",
       phone: "+91 9429311347",
-      password: "SA@1347"
     },
     {
       id: 117,
@@ -1568,7 +1453,6 @@ export const SocietyData = {
       role: "Resident",
       email: "roshan.vasava@gmail.com",
       phone: "+91 7405188708",
-      password: "SA@8708"
     },
     {
       id: 118,
@@ -1578,7 +1462,6 @@ export const SocietyData = {
       role: "Resident",
       email: "jebi.gandharva6529@gmail.com",
       phone: "+91 8866106529",
-      password: "SA@6529"
     },
     {
       id: 119,
@@ -1588,7 +1471,6 @@ export const SocietyData = {
       role: "Resident",
       email: "santosh.dongala@gmail.com",
       phone: "+91 8401392775",
-      password: "SA@2775"
     },
     {
       id: 120,
@@ -1598,7 +1480,6 @@ export const SocietyData = {
       role: "Resident",
       email: "nirav.vaghela@gmail.com",
       phone: "+91 8849301963",
-      password: "SA@1963"
     },
     {
       id: 121,
@@ -1608,7 +1489,6 @@ export const SocietyData = {
       role: "Committee Member",
       email: "rakeshbhai.patil@gmail.com",
       phone: "+91 9904849478",
-      password: "SA@9478"
     },
     {
       id: 122,
@@ -1618,7 +1498,6 @@ export const SocietyData = {
       role: "Resident",
       email: "mehul.rana@gmail.com",
       phone: "+91 9429709400",
-      password: "SA@9400"
     },
     {
       id: 123,
@@ -1628,7 +1507,6 @@ export const SocietyData = {
       role: "Resident",
       email: "ashokkumar.maurya@gmail.com",
       phone: "+91 9727128680",
-      password: "SA@8680"
     },
     {
       id: 124,
@@ -1638,7 +1516,6 @@ export const SocietyData = {
       role: "Resident",
       email: "uday.kareliya@gmail.com",
       phone: "+91 7490845150",
-      password: "SA@5150"
     },
     {
       id: 125,
@@ -1648,7 +1525,6 @@ export const SocietyData = {
       role: "Committee Member",
       email: "anupkumar.solanki@gmail.com",
       phone: "+91 9558817361",
-      password: "SA@7361"
     },
     {
       id: 126,
@@ -1658,7 +1534,6 @@ export const SocietyData = {
       role: "Resident",
       email: "nilambri.khiste@gmail.com",
       phone: "+91 9825537138",
-      password: "SA@7138"
     },
     {
       id: 127,
@@ -1668,7 +1543,6 @@ export const SocietyData = {
       role: "Resident",
       email: "patel.pravinbhai@gmail.com",
       phone: "+91 8347037692",
-      password: "SA@7692"
     },
     {
       id: 128,
@@ -1678,7 +1552,6 @@ export const SocietyData = {
       role: "Resident",
       email: "mahasveta.kansara@gmail.com",
       phone: "+91 6351914701",
-      password: "SA@4701"
     },
     {
       id: 129,
@@ -1688,7 +1561,6 @@ export const SocietyData = {
       role: "Resident",
       email: "roshnikunvaraba.chauhan@gmail.com",
       phone: "+91 9904334371",
-      password: "SA@4371"
     },
     {
       id: 131,
@@ -1698,7 +1570,6 @@ export const SocietyData = {
       role: "Resident",
       email: "jignesh.mayavanshi@gmail.com",
       phone: "+91 7861027789",
-      password: "SA@7789"
     },
     {
       id: 132,
@@ -1708,7 +1579,6 @@ export const SocietyData = {
       role: "Resident",
       email: "varia.sunilkumar@gmail.com",
       phone: "+91 9712337722",
-      password: "SA@7722"
     },
     {
       id: 133,
@@ -1718,7 +1588,6 @@ export const SocietyData = {
       role: "Resident",
       email: "nishant.sampat@gmail.com",
       phone: "+91 7984386912",
-      password: "SA@6912"
     },
     {
       id: 134,
@@ -1728,7 +1597,6 @@ export const SocietyData = {
       role: "Resident",
       email: "vishalkumar.patel@gmail.com",
       phone: "+91 7600052176",
-      password: "SA@2176"
     },
     {
       id: 135,
@@ -1738,7 +1606,6 @@ export const SocietyData = {
       role: "Resident",
       email: "hema.brahmbhatt@gmail.com",
       phone: "+91 9662051824",
-      password: "SA@1824"
     },
     {
       id: 136,
@@ -1748,7 +1615,6 @@ export const SocietyData = {
       role: "Resident",
       email: "jignesh.solanki@gmail.com",
       phone: "+91 9913718053",
-      password: "SA@8053"
     },
     {
       id: 137,
@@ -1758,7 +1624,6 @@ export const SocietyData = {
       role: "Resident",
       email: "nilam.parmar@gmail.com",
       phone: "+91 9978105562",
-      password: "SA@5562"
     },
     {
       id: 138,
@@ -1768,7 +1633,6 @@ export const SocietyData = {
       role: "Resident",
       email: "goswami.rajugiri@gmail.com",
       phone: "+91 9662430821",
-      password: "SA@0821"
     },
     {
       id: 139,
@@ -1778,7 +1642,6 @@ export const SocietyData = {
       role: "Resident",
       email: "nilam.patel@gmail.com",
       phone: "+91 9924042447",
-      password: "SA@2447"
     },
     {
       id: 140,
@@ -1788,7 +1651,6 @@ export const SocietyData = {
       role: "Resident",
       email: "nishaben.gosai@gmail.com",
       phone: "+91 8980635131",
-      password: "SA@5131"
     },
     {
       id: 141,
@@ -1798,7 +1660,6 @@ export const SocietyData = {
       role: "Resident",
       email: "patel.surekhaben@gmail.com",
       phone: "+91 9824583204",
-      password: "SA@3204"
     },
     {
       id: 142,
@@ -1808,7 +1669,6 @@ export const SocietyData = {
       role: "Resident",
       email: "prajapati.gordhanbhai@gmail.com",
       phone: "+91 9428693979",
-      password: "SA@3979"
     },
     {
       id: 143,
@@ -1818,7 +1678,6 @@ export const SocietyData = {
       role: "Committee Member",
       email: "rajeshbhai.machhi@gmail.com",
       phone: "+91 9998010264",
-      password: "SA@0264"
     },
     {
       id: 144,
@@ -1828,7 +1687,6 @@ export const SocietyData = {
       role: "Resident",
       email: "nita.gandhi@gmail.com",
       phone: "+91 9904839258",
-      password: "SA@9258"
     },
     {
       id: 145,
@@ -1838,7 +1696,6 @@ export const SocietyData = {
       role: "Resident",
       email: "sanket.maisuriya@gmail.com",
       phone: "+91 9998155889",
-      password: "SA@5889"
     },
     {
       id: 146,
@@ -1848,7 +1705,6 @@ export const SocietyData = {
       role: "Resident",
       email: "dhruv.chaudhary@gmail.com",
       phone: "+91 8866495276",
-      password: "SA@5276"
     },
     {
       id: 147,
@@ -1858,7 +1714,6 @@ export const SocietyData = {
       role: "Resident",
       email: "daya.chandnani@gmail.com",
       phone: "+91 9925243140",
-      password: "SA@3140"
     },
     {
       id: 148,
@@ -1868,7 +1723,6 @@ export const SocietyData = {
       role: "Resident",
       email: "chauhan.rameshbhai@gmail.com",
       phone: "+91 9879646446",
-      password: "SA@6446"
     },
     {
       id: 149,
@@ -1878,7 +1732,6 @@ export const SocietyData = {
       role: "President",
       email: "dipenbhai.desai@gmail.com",
       phone: "+91 9898314262",
-      password: "SA@4262"
     },
     {
       id: 150,
@@ -1888,7 +1741,6 @@ export const SocietyData = {
       role: "Resident",
       email: "bhoumik.sevak@gmail.com",
       phone: "+91 9824694019",
-      password: "SA@4019"
     },
     {
       id: 151,
@@ -1898,7 +1750,6 @@ export const SocietyData = {
       role: "Resident",
       email: "ravjibhai.chavda@gmail.com",
       phone: "+91 9427839414",
-      password: "SA@9414"
     },
     {
       id: 152,
@@ -1908,7 +1759,6 @@ export const SocietyData = {
       role: "Resident",
       email: "jayantibhai.parmar@gmail.com",
       phone: "+91 9904236202",
-      password: "SA@6202"
     },
     {
       id: 153,
@@ -1918,7 +1768,6 @@ export const SocietyData = {
       role: "Resident",
       email: "demo@example.com",
       phone: "+91 90000 00000",
-      password: "demo123"
     },
     {
       id: 154,
@@ -1928,7 +1777,6 @@ export const SocietyData = {
       role: "Admin",
       email: "admin@shreenathji.org",
       phone: "+91 90000 11111",
-      password: "admin123"
     }
   ],
   notices: [

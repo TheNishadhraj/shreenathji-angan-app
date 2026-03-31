@@ -1,51 +1,43 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { supabase } from "../lib/supabase";
-import * as Crypto from "expo-crypto";
+import {
+  hashPassword,
+  verifyPassword,
+  setSecureSession,
+  getSecureSession,
+  clearSecureSession,
+  getSecureBiometricEnabled,
+  setSecureBiometricEnabled,
+  clearSecureBiometricEnabled,
+  sanitizeText,
+  MAX_LENGTHS,
+} from "./security";
 
-// ─── Password Hashing (SHA-256) ──────────────────────────────────
-// Passwords are stored with a prefix so we can distinguish hashed from legacy.
-const HASH_PREFIX = "$sha256$";
+// Re-export security utilities so existing imports keep working
+export { hashPassword, verifyPassword } from "./security";
 
-/** Hash a plaintext password with SHA-256. Returns a prefixed hex string. */
-export const hashPassword = async (plain: string): Promise<string> => {
-  const digest = await Crypto.digestStringAsync(
-    Crypto.CryptoDigestAlgorithm.SHA256,
-    plain,
-    { encoding: Crypto.CryptoEncoding.HEX }
-  );
-  return HASH_PREFIX + digest;
-};
+// ─── Session (SecureStore-backed) ───────────────────────────────
+const HASH_PREFIX = "$sha256$"; // legacy prefix detection only
+const SALTED_PREFIX = "$sha256s$";
 
-/**
- * Verify a password input against a stored value.
- * Handles both hashed ($sha256$...) and legacy plaintext formats.
- * Returns [isMatch, needsMigration] — if needsMigration is true,
- * the caller should immediately hash+save the password.
- */
-export const verifyPassword = async (
-  input: string,
-  stored: string
-): Promise<[isMatch: boolean, needsMigration: boolean]> => {
-  if (stored.startsWith(HASH_PREFIX)) {
-    const inputHash = await hashPassword(input);
-    return [inputHash === stored, false];
-  }
-  // Legacy plaintext — accept if matching, flag for migration
-  return [input === stored, input === stored];
-};
-
-// ─── Session (intentionally device-local) ───────────────────────
-export const setSession = async (user: Record<string, string>) => {
-  await AsyncStorage.setItem("sa_user", JSON.stringify(user));
+export const setSession = async (user: Record<string, any>) => {
+  await setSecureSession({
+    id: String(user.id ?? ""),
+    name: user.name ?? "",
+    email: user.email ?? "",
+    flat: user.flat ?? "",
+    block: user.block ?? "",
+    role: user.role ?? "",
+    phone: user.phone ?? "",
+  });
 };
 
 export const getSession = async () => {
-  const raw = await AsyncStorage.getItem("sa_user");
-  return raw ? JSON.parse(raw) : null;
+  return getSecureSession();
 };
 
 export const clearSession = async () => {
-  await AsyncStorage.removeItem("sa_user");
+  await clearSecureSession();
 };
 
 // ─── Action Usage (intentionally device-local for UX) ──────────
@@ -73,7 +65,7 @@ export const setRegisteredUsers = async (users: Record<string, any>[]) => {
   // Hash any plaintext passwords before persisting
   const safeUsers = await Promise.all(
     users.map(async (u) => {
-      if (u.password && !u.password.startsWith(HASH_PREFIX)) {
+      if (u.password && !u.password.startsWith(SALTED_PREFIX) && !u.password.startsWith(HASH_PREFIX)) {
         return { ...u, password: await hashPassword(u.password) };
       }
       return u;
@@ -100,7 +92,9 @@ export const setPasswordOverrides = async (overrides: Record<string, string>) =>
   const hashEntries = await Promise.all(
     Object.entries(overrides).map(async ([email, password]) => ({
       email,
-      password: password.startsWith(HASH_PREFIX) ? password : await hashPassword(password),
+      password: (password.startsWith(SALTED_PREFIX) || password.startsWith(HASH_PREFIX))
+        ? password
+        : await hashPassword(password),
     }))
   );
   if (!hashEntries.length) return;
@@ -110,7 +104,9 @@ export const setPasswordOverrides = async (overrides: Record<string, string>) =>
 
 export const setPasswordOverride = async (email: string, password: string) => {
   // Always persist the hash, never plaintext
-  const hashed = password.startsWith(HASH_PREFIX) ? password : await hashPassword(password);
+  const hashed = (password.startsWith(SALTED_PREFIX) || password.startsWith(HASH_PREFIX))
+    ? password
+    : await hashPassword(password);
   const { error } = await supabase
     .from("password_overrides")
     .upsert({ email: email.toLowerCase(), password: hashed });
@@ -138,7 +134,7 @@ export const setProfilePhoto = async (email: string, uri: string): Promise<strin
   const isLocalUri = uri.startsWith("file://") || uri.startsWith("content://") ||
     uri.startsWith("ph://") || uri.startsWith("/");
   if (!isLocalUri) {
-    console.warn("[storage] setProfilePhoto: rejected non-local URI");
+    if (__DEV__) console.warn("[storage] setProfilePhoto: rejected non-local URI");
     return uri;
   }
   try {
@@ -637,7 +633,7 @@ export const addNewsArticle = async (article: Omit<NewsArticle, "id">): Promise<
     date: entry.date,
     posted_by: entry.postedBy,
   });
-  if (error) console.warn("[storage] addNewsArticle:", error.message);
+  if (error && __DEV__) console.warn("[storage] addNewsArticle:", error.message);
   return entry;
 };
 
@@ -673,7 +669,7 @@ export const markNoticeReadByUser = async (noticeId: number, userEmail: string):
 export const addPoll = async (poll: any): Promise<any> => {
   const entry = { ...poll, id: Date.now() };
   const { error } = await supabase.from("polls").insert({ id: entry.id, data: entry });
-  if (error) console.warn("[storage] addPoll:", error.message);
+  if (error && __DEV__) console.warn("[storage] addPoll:", error.message);
   return entry;
 };
 
@@ -684,40 +680,38 @@ export const closePoll = async (id: number) => {
   }
 };
 
-// ─── Biometric Preference (device-local) ─────────────────────────
-export const getBiometricEnabled = async (): Promise<string | null> => {
-  return AsyncStorage.getItem("sa_biometric_email");
-};
-
-export const setBiometricEnabled = async (email: string) => {
-  await AsyncStorage.setItem("sa_biometric_email", email.toLowerCase());
-};
-
-export const clearBiometricEnabled = async () => {
-  await AsyncStorage.removeItem("sa_biometric_email");
-};
+// ─── Biometric Preference (SecureStore-backed) ──────────────────
+export const getBiometricEnabled = getSecureBiometricEnabled;
+export const setBiometricEnabled = setSecureBiometricEnabled;
+export const clearBiometricEnabled = clearSecureBiometricEnabled;
 
 // ─── OTP Helpers (server-side via Supabase Edge Function + otp_codes table) ──
 
-/** Send OTP to a target (email/phone). Returns the code only as fallback (when email delivery is not configured). */
+/** Send OTP to a target (email/phone). Code is NEVER returned to client in production. */
 export const generateOTP = async (target: string, action = "verify"): Promise<{ delivered: boolean; code?: string }> => {
   try {
     const { data, error } = await supabase.functions.invoke("send-otp", {
       body: { target: target.toLowerCase().trim(), action },
     });
     if (error) throw error;
-    return { delivered: !!data?.delivered, code: data?.code };
+    // Only show code in dev when email delivery isn't configured
+    const code = __DEV__ ? data?.code : undefined;
+    return { delivered: !!data?.delivered, code };
   } catch {
     // Fallback: generate locally and store in Supabase directly
-    const code = String(Math.floor(100000 + Math.random() * 900000));
-    const expiresAt = new Date(Date.now() + 5 * 60_000).toISOString();
+    const bytes = await import("expo-crypto").then((m) => m.getRandomBytesAsync(3));
+    const code = String(
+      (bytes[0] * 65536 + bytes[1] * 256 + bytes[2]) % 900000 + 100000,
+    );
+    const expiresAt = new Date(Date.now() + 3 * 60_000).toISOString(); // 3 min expiry
     await supabase.from("otp_codes").insert({
       target: target.toLowerCase().trim(),
       code,
       action,
       expires_at: expiresAt,
     });
-    return { delivered: false, code };
+    // Only return code in dev builds
+    return { delivered: false, code: __DEV__ ? code : undefined };
   }
 };
 

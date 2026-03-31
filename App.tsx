@@ -1,6 +1,6 @@
 import "react-native-url-polyfill/auto";
 import React, { useEffect, useState } from "react";
-import { View, Text, Platform, ScrollView } from "react-native";
+import { View, Text, Platform, ScrollView, Alert } from "react-native";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -36,6 +36,7 @@ import { NotificationsScreen } from "./src/screens/NotificationsScreen";
 import { MemberProfileScreen } from "./src/screens/MemberProfileScreen";
 import { NoticesScreen } from "./src/screens/NoticesScreen";
 import { getSession, clearSession, setSession } from "./src/utils/storage";
+import { checkDeviceIntegrity } from "./src/utils/security";
 import { palette, radius, typography, spacing } from "./src/theme/tokens";
 
 const isWeb = Platform.OS === "web";
@@ -176,6 +177,17 @@ const AppRoot = () => {
       const session = await getSession();
       setUser(session);
       setLoading(false);
+
+      // Device integrity check — warn on emulators in production
+      if (!__DEV__) {
+        const integrity = await checkDeviceIntegrity();
+        if (integrity.isEmulator) {
+          Alert.alert(
+            "Security Warning",
+            "This app is running on an emulator or simulator. Some features may be restricted.",
+          );
+        }
+      }
     };
     init();
   }, []);

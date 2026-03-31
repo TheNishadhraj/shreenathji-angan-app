@@ -37,6 +37,7 @@ import {
   setBiometricEnabled,
   clearBiometricEnabled,
 } from "../utils/storage";
+import { validatePasswordStrength, MAX_LENGTHS } from "../utils/security";
 
 type ProfileScreenProps = {
   user: {
@@ -177,8 +178,9 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onUpdate, on
   };
 
   const handleChangePassword = async () => {
-    if (newPassword.length < 6) {
-      Alert.alert("Invalid", "New password must be at least 6 characters.");
+    const pwdErr = validatePasswordStrength(newPassword);
+    if (pwdErr) {
+      Alert.alert("Weak Password", pwdErr);
       return;
     }
     if (newPassword !== confirmPassword) {
@@ -186,14 +188,19 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onUpdate, on
       return;
     }
     const overrides = await getPasswordOverrides();
-    const allUsers = [...SocietyData.users, ...(await getRegisteredUsers())];
+    const allUsers = [...SocietyData.users, ...(await getRegisteredUsers())] as Record<string, any>[];
     const existing = allUsers.find((u) => u.email.toLowerCase() === user.email.toLowerCase());
     const expected = overrides[user.email.toLowerCase()] || existing?.password || "";
+    if (!expected) {
+      Alert.alert("Error", "Cannot verify current password. Use Forgot Password to set a new one.");
+      return;
+    }
     const [isMatch] = await verifyPassword(currentPassword, expected);
     if (!isMatch) {
       Alert.alert("Invalid", "Current password is incorrect.");
       return;
     }
+    // setPasswordOverrides hashes automatically
     overrides[user.email.toLowerCase()] = newPassword;
     await setPasswordOverrides(overrides);
     const registered = await getRegisteredUsers();
@@ -637,6 +644,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onUpdate, on
               placeholderTextColor={colors.textMuted}
               value={name}
               onChangeText={setName}
+              maxLength={MAX_LENGTHS.name}
               style={{
                 borderWidth: 1,
                 borderColor: colors.border,
@@ -652,6 +660,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onUpdate, on
               placeholderTextColor={colors.textMuted}
               value={phone}
               onChangeText={setPhone}
+              maxLength={MAX_LENGTHS.phone}
               style={{
                 borderWidth: 1,
                 borderColor: colors.border,
@@ -723,6 +732,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onUpdate, on
               value={currentPassword}
               onChangeText={setCurrentPassword}
               secureTextEntry
+              maxLength={MAX_LENGTHS.password}
               style={{
                 borderWidth: 1,
                 borderColor: colors.border,
@@ -734,11 +744,12 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onUpdate, on
               }}
             />
             <TextInput
-              placeholder="New Password"
+              placeholder="New Password (min 8 chars, letters + numbers)"
               placeholderTextColor={colors.textMuted}
               value={newPassword}
               onChangeText={setNewPassword}
               secureTextEntry
+              maxLength={MAX_LENGTHS.password}
               style={{
                 borderWidth: 1,
                 borderColor: colors.border,
@@ -755,6 +766,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onUpdate, on
               value={confirmPassword}
               onChangeText={setConfirmPassword}
               secureTextEntry
+              maxLength={MAX_LENGTHS.password}
               style={{
                 borderWidth: 1,
                 borderColor: colors.border,

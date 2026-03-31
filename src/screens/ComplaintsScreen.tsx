@@ -16,6 +16,7 @@ import {
   getComplaints, setComplaints, addComplaint, updateComplaintStatus, addNotification, getSession,
   type ComplaintRecord,
 } from "../utils/storage";
+import { sanitizeText, MAX_LENGTHS } from "../utils/security";
 
 const filters = ["All", "Pending", "In Progress", "Resolved"];
 const categories = ["Plumbing", "Electrical", "Lift", "Security", "Cleaning", "Parking", "Other"];
@@ -61,13 +62,15 @@ export const ComplaintsScreen: React.FC = () => {
   const list = complaints.filter((c) => filter === "All" || c.status === filter);
 
   const submitComplaint = async () => {
-    if (!subject.trim() || !description.trim()) {
+    const safeSubject = sanitizeText(subject, MAX_LENGTHS.complaintTitle);
+    const safeDesc = sanitizeText(description, MAX_LENGTHS.complaintDesc);
+    if (!safeSubject || !safeDesc) {
       Alert.alert("Required", "Please fill in subject and description.");
       return;
     }
     const entry = await addComplaint({
-      title: subject.trim(),
-      description: description.trim(),
+      title: safeSubject,
+      description: safeDesc,
       status: "Pending",
       category,
       date: new Date().toISOString().split("T")[0],
@@ -136,6 +139,7 @@ export const ComplaintsScreen: React.FC = () => {
           placeholderTextColor={colors.textMuted}
           value={subject}
           onChangeText={setSubject}
+          maxLength={MAX_LENGTHS.complaintTitle}
           style={{ borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: 12, marginBottom: spacing.sm, color: colors.text }}
         />
         <TextInput
@@ -143,6 +147,7 @@ export const ComplaintsScreen: React.FC = () => {
           placeholderTextColor={colors.textMuted}
           value={description}
           onChangeText={setDescription}
+          maxLength={MAX_LENGTHS.complaintDesc}
           style={{ borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: 12, marginBottom: spacing.sm, color: colors.text, minHeight: 80, textAlignVertical: "top" }}
           multiline
         />
@@ -227,6 +232,7 @@ export const ComplaintsScreen: React.FC = () => {
               placeholderTextColor={colors.textMuted}
               value={adminNote}
               onChangeText={setAdminNote}
+              maxLength={MAX_LENGTHS.adminNote}
               style={{ borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: 12, marginBottom: spacing.md, color: colors.text, minHeight: 60, textAlignVertical: "top" }}
               multiline
             />

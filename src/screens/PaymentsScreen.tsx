@@ -17,6 +17,7 @@ import {
   addNotification, getSession,
   type PaymentType, type PaymentRecord,
 } from "../utils/storage";
+import { sanitizeText, MAX_LENGTHS } from "../utils/security";
 
 const PAYMENT_METHODS = [
   { id: "upi", label: "UPI", icon: "📱" },
@@ -136,15 +137,18 @@ export const PaymentsScreen: React.FC = () => {
   };
 
   const savePaymentType = async () => {
-    if (!editName.trim()) return;
+    const safeName = sanitizeText(editName, MAX_LENGTHS.paymentTypeName);
+    if (!safeName) return;
     const amount = Number(editAmount) || 0;
+    const safePeriod = sanitizeText(editPeriod, MAX_LENGTHS.paymentTypePeriod);
+    const safeDesc = sanitizeText(editDesc, MAX_LENGTHS.paymentTypeDesc);
     let updated: PaymentType[];
     if (editingType) {
       updated = paymentTypes.map((t) =>
-        t.id === editingType.id ? { ...t, name: editName.trim(), amount, period: editPeriod.trim(), description: editDesc.trim() } : t
+        t.id === editingType.id ? { ...t, name: safeName, amount, period: safePeriod, description: safeDesc } : t
       );
     } else {
-      const newType: PaymentType = { id: Date.now(), name: editName.trim(), amount, period: editPeriod.trim(), description: editDesc.trim() };
+      const newType: PaymentType = { id: Date.now(), name: safeName, amount, period: safePeriod, description: safeDesc };
       updated = [...paymentTypes, newType];
     }
     await setPaymentTypes(updated);
@@ -153,7 +157,7 @@ export const PaymentsScreen: React.FC = () => {
 
     await addNotification({
       title: "Payment Type Updated",
-      message: `${editingType ? "Updated" : "New"}: ${editName.trim()} - ${currency(amount)}`,
+      message: `${editingType ? "Updated" : "New"}: ${safeName} - ${currency(amount)}`,
       icon: "💳",
       date: new Date().toISOString().split("T")[0],
       targetType: "all",
@@ -333,6 +337,7 @@ export const PaymentsScreen: React.FC = () => {
               placeholderTextColor={colors.textMuted}
               value={editName}
               onChangeText={setEditName}
+              maxLength={MAX_LENGTHS.paymentTypeName}
               style={{ borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: 12, marginBottom: spacing.sm, color: colors.text }}
             />
             <TextInput
@@ -341,6 +346,7 @@ export const PaymentsScreen: React.FC = () => {
               value={editAmount}
               onChangeText={setEditAmount}
               keyboardType="numeric"
+              maxLength={10}
               style={{ borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: 12, marginBottom: spacing.sm, color: colors.text }}
             />
             <TextInput
@@ -348,6 +354,7 @@ export const PaymentsScreen: React.FC = () => {
               placeholderTextColor={colors.textMuted}
               value={editPeriod}
               onChangeText={setEditPeriod}
+              maxLength={MAX_LENGTHS.paymentTypePeriod}
               style={{ borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: 12, marginBottom: spacing.sm, color: colors.text }}
             />
             <TextInput
@@ -355,6 +362,7 @@ export const PaymentsScreen: React.FC = () => {
               placeholderTextColor={colors.textMuted}
               value={editDesc}
               onChangeText={setEditDesc}
+              maxLength={MAX_LENGTHS.paymentTypeDesc}
               style={{ borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: 12, marginBottom: spacing.md, color: colors.text }}
             />
             <View style={{ flexDirection: "row", gap: spacing.sm }}>
